@@ -4,10 +4,12 @@ import cz.cvut.fit.ejk.gaidumax.drive.dto.ErrorDto;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
 @Provider
+@Slf4j
 public class ExceptionHandler implements ExceptionMapper<Exception> {
 
     private static final Response.Status STATUS = Response.Status.INTERNAL_SERVER_ERROR;
@@ -15,6 +17,7 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
 
     @Override
     public Response toResponse(Exception e) {
+        log.error("Unexpected exception occurred: ", e);
         var errorDto = buildErrorDto();
         return Response.status(STATUS)
                 .entity(errorDto)
