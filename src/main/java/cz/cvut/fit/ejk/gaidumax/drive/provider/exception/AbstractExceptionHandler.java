@@ -1,4 +1,4 @@
-package cz.cvut.fit.ejk.gaidumax.drive.provider;
+package cz.cvut.fit.ejk.gaidumax.drive.provider.exception;
 
 import cz.cvut.fit.ejk.gaidumax.drive.dto.ErrorDto;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.AbstractException;
@@ -9,7 +9,7 @@ import jakarta.ws.rs.ext.Provider;
 import java.time.LocalDateTime;
 
 @Provider
-public class RestResponseExceptionHandler implements ExceptionMapper<AbstractException> {
+public class AbstractExceptionHandler implements ExceptionMapper<AbstractException> {
 
     private static final String STATUS_CODE_TEMPLATE = "%d %s";
 
