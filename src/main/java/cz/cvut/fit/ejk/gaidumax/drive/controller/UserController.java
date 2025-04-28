@@ -1,8 +1,8 @@
-package cz.cvut.fit.ejk.gaidumax.controller;
+package cz.cvut.fit.ejk.gaidumax.drive.controller;
 
-import cz.cvut.fit.ejk.gaidumax.dto.UserDto;
-import cz.cvut.fit.ejk.gaidumax.mapper.UserMapper;
-import cz.cvut.fit.ejk.gaidumax.service.interfaces.UserService;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.UserDto;
+import cz.cvut.fit.ejk.gaidumax.drive.mapper.UserMapper;
+import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

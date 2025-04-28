@@ -1,4 +1,4 @@
-package cz.cvut.fit.ejk.gaidumax;
+package cz.cvut.fit.ejk.gaidumax.drive;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;

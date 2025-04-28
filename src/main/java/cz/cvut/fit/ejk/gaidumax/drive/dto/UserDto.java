@@ -1,4 +1,4 @@
-package cz.cvut.fit.ejk.gaidumax.dto;
+package cz.cvut.fit.ejk.gaidumax.drive.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

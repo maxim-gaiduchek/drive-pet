@@ -1,4 +1,4 @@
-package cz.cvut.fit.ejk.gaidumax.repository;
+package cz.cvut.fit.ejk.gaidumax.drive.repository;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;

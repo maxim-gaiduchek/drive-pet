@@ -1,4 +1,4 @@
-package cz.cvut.fit.ejk.gaidumax.config;
+package cz.cvut.fit.ejk.gaidumax.drive.config;
 
 import org.mapstruct.Builder;
 import org.mapstruct.MappingConstants;

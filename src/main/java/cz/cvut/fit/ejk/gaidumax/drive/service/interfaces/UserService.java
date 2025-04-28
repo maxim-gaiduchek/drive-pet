@@ -1,6 +1,6 @@
-package cz.cvut.fit.ejk.gaidumax.service.interfaces;
+package cz.cvut.fit.ejk.gaidumax.drive.service.interfaces;
 
-import cz.cvut.fit.ejk.gaidumax.entity.User;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
 
 import java.util.Optional;
 

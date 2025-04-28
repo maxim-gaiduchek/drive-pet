@@ -1,6 +1,6 @@
-package cz.cvut.fit.ejk.gaidumax.repository;
+package cz.cvut.fit.ejk.gaidumax.drive.repository;
 
-import cz.cvut.fit.ejk.gaidumax.entity.BaseEntity;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.BaseEntity;
 
 public class BaseEntityRepository<T extends BaseEntity> extends Repository<T, Long> {
 

@@ -1,6 +1,6 @@
-package cz.cvut.fit.ejk.gaidumax.repository;
+package cz.cvut.fit.ejk.gaidumax.drive.repository;
 
-import cz.cvut.fit.ejk.gaidumax.entity.User;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped

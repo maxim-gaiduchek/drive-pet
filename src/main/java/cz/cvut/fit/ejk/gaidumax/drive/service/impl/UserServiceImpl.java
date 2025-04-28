@@ -1,8 +1,8 @@
-package cz.cvut.fit.ejk.gaidumax.service.impl;
+package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 
-import cz.cvut.fit.ejk.gaidumax.entity.User;
-import cz.cvut.fit.ejk.gaidumax.repository.UserRepository;
-import cz.cvut.fit.ejk.gaidumax.service.interfaces.UserService;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
+import cz.cvut.fit.ejk.gaidumax.drive.repository.UserRepository;
+import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

@@ -1,4 +1,4 @@
-package cz.cvut.fit.ejk.gaidumax.dto;
+package cz.cvut.fit.ejk.gaidumax.drive.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,12 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class FileDto {
+public class FolderDto {
 
     private Long id;
     private String name;
-    private String fileName;
-    private String fileType;
-    private Long size;
     private BaseInfoDto parentFolder;
 }

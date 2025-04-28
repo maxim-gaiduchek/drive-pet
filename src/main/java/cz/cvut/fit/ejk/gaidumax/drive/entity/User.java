@@ -1,4 +1,4 @@
-package cz.cvut.fit.ejk.gaidumax.entity;
+package cz.cvut.fit.ejk.gaidumax.drive.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
