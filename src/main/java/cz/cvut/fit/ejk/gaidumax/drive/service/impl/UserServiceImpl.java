@@ -1,6 +1,8 @@
 package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 
 import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
+import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
+import cz.cvut.fit.ejk.gaidumax.drive.exception.code.UserExceptionCode;
 import cz.cvut.fit.ejk.gaidumax.drive.repository.UserRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,6 +23,6 @@ public class UserServiceImpl implements UserService {
 
     public User getByIdOrThrow(Long id) {
         return findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFoundException(UserExceptionCode.USER_DOES_NOT_EXIST, id));
     }
 }
