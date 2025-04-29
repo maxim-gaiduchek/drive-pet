@@ -1,6 +1,6 @@
 package cz.cvut.fit.ejk.gaidumax.drive.provider.exception;
 
-import cz.cvut.fit.ejk.gaidumax.drive.dto.ErrorDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.exception.ErrorDto;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.AbstractException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
