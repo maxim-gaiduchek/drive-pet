@@ -46,7 +46,9 @@ public class FileServiceImpl implements FileService {
 
     private void enrichWithEntities(File file, FileDto fileDto) {
         var author = userService.getByIdOrThrow(1L);
-        var parentFolder = folderService.getByIdOrThrow(fileDto.getParentFolder().getId());
+        var parentFolder = Optional.ofNullable(fileDto.getParentFolder().getId())
+                .map(folderService::getByIdOrThrow)
+                .orElse(null);
         file.setAuthor(author);
         file.setParentFolder(parentFolder);
     }
