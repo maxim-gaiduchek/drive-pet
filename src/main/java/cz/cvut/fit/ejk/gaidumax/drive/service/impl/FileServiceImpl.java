@@ -6,7 +6,6 @@ import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.code.FileExceptionCode;
 import cz.cvut.fit.ejk.gaidumax.drive.mapper.FileMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.repository.FileRepository;
-import cz.cvut.fit.ejk.gaidumax.drive.repository.UserRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FolderService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
