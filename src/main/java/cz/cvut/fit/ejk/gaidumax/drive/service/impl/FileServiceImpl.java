@@ -1,5 +1,6 @@
 package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 
+import cz.cvut.fit.ejk.gaidumax.drive.dto.BaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
@@ -46,7 +47,8 @@ public class FileServiceImpl implements FileService {
 
     private void enrichWithEntities(File file, FileDto fileDto) {
         var author = userService.getByIdOrThrow(1L);
-        var parentFolder = Optional.ofNullable(fileDto.getParentFolder().getId())
+        var parentFolder = Optional.ofNullable(fileDto.getParentFolder())
+                .map(BaseInfoDto::getId)
                 .map(folderService::getByIdOrThrow)
                 .orElse(null);
         file.setAuthor(author);
