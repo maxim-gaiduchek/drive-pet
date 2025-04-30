@@ -44,12 +44,16 @@ public class FolderServiceImpl implements FolderService {
 
     private void enrichWithEntities(Folder folder, FolderDto folderDto) {
         var author = userService.getByIdOrThrow(1L);
-        var parentFolder = Optional.ofNullable(folderDto.getParentFolder())
+        var parentFolder = fetchFolder(folderDto.getParentFolder());
+        folder.setAuthor(author);
+        folder.setParentFolder(parentFolder);
+    }
+
+    private Folder fetchFolder(BaseInfoDto folderDto) {
+        return Optional.ofNullable(folderDto)
                 .map(BaseInfoDto::getId)
                 .map(this::getByIdOrThrow)
                 .orElse(null);
-        folder.setAuthor(author);
-        folder.setParentFolder(parentFolder);
     }
 
     @Override

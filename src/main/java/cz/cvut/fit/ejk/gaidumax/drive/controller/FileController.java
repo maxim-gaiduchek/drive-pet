@@ -1,6 +1,7 @@
 package cz.cvut.fit.ejk.gaidumax.drive.controller;
 
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FileDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.mapper.FileMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
 import jakarta.inject.Inject;
@@ -44,7 +45,7 @@ public class FileController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FileDto update(@PathParam("id") Long id, @Valid FileDto fileDto) {
+    public FileDto update(@PathParam("id") Long id, @Valid UpdateFileDto fileDto) {
         var file = fileService.update(id, fileDto);
         return fileMapper.toDto(file);
     }

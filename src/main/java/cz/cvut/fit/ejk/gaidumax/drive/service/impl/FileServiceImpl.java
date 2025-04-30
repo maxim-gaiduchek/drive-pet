@@ -2,7 +2,9 @@ package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 
 import cz.cvut.fit.ejk.gaidumax.drive.dto.BaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FileDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.code.FileExceptionCode;
 import cz.cvut.fit.ejk.gaidumax.drive.mapper.FileMapper;
@@ -47,16 +49,20 @@ public class FileServiceImpl implements FileService {
 
     private void enrichWithEntities(File file, FileDto fileDto) {
         var author = userService.getByIdOrThrow(1L);
-        var parentFolder = Optional.ofNullable(fileDto.getParentFolder())
-                .map(BaseInfoDto::getId)
-                .map(folderService::getByIdOrThrow)
-                .orElse(null);
+        var parentFolder = fetchFolder(fileDto.getParentFolder());
         file.setAuthor(author);
         file.setParentFolder(parentFolder);
     }
 
+    private Folder fetchFolder(BaseInfoDto folderDto) {
+        return Optional.ofNullable(folderDto)
+                .map(BaseInfoDto::getId)
+                .map(folderService::getByIdOrThrow)
+                .orElse(null);
+    }
+
     @Override
-    public File update(Long id, FileDto fileDto) {
+    public File update(Long id, UpdateFileDto fileDto) {
         var file = getByIdOrThrow(id);
         file.setFileName(fileDto.getFileName());
         return fileRepository.save(file);
