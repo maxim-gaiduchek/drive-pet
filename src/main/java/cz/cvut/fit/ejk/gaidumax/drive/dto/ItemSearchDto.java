@@ -1,0 +1,26 @@
+package cz.cvut.fit.ejk.gaidumax.drive.dto;
+
+import cz.cvut.fit.ejk.gaidumax.drive.entity.ItemType;
+import jakarta.ws.rs.QueryParam;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@SuperBuilder
+public class ItemSearchDto extends PageableDto {
+
+    @QueryParam("authorIds")
+    private List<Long> authorIds;
+    @QueryParam("types")
+    private List<ItemType> types;
+    @QueryParam("parentFolderId")
+    private Long parentFolderId;
+}

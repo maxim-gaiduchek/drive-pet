@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class Folder extends BaseEntity {
 
-    @Column(name = "file_name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
