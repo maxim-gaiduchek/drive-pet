@@ -15,6 +15,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import java.util.List;
+
 @Path("/folders")
 public class FolderController {
 
@@ -30,6 +32,14 @@ public class FolderController {
     public FolderDto get(@PathParam("id") Long id) {
         var folder = folderService.getByIdOrThrow(id);
         return folderMapper.toDto(folder);
+    }
+
+    @GET
+    @Path("/{id}/parents")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<FolderDto> getAllParentFolder(@PathParam("id") Long id) {
+        var folders = folderService.getAllParentFolders(id);
+        return folderMapper.toDtos(folders);
     }
 
     @POST

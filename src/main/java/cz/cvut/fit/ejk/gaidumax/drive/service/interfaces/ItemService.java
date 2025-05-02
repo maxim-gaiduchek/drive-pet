@@ -1,8 +1,7 @@
 package cz.cvut.fit.ejk.gaidumax.drive.service.interfaces;
 
-import cz.cvut.fit.ejk.gaidumax.drive.dto.ItemSearchDto;
-import cz.cvut.fit.ejk.gaidumax.drive.filter.ItemFilter;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.ItemDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.ItemSearchDto;
 
 import java.util.List;
 

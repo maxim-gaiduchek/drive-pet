@@ -13,6 +13,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -35,6 +36,12 @@ public class FolderServiceImpl implements FolderService {
     public Folder getByIdOrThrow(Long id) {
         return findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(FolderExceptionCode.FOLDER_DOES_NOT_EXIST, id));
+    }
+
+    @Override
+    public List<Folder> getAllParentFolders(Long folderId) {
+        var folder = getByIdOrThrow(folderId);
+        return folderRepository.findAllParents(folder.getId());
     }
 
     @Override
