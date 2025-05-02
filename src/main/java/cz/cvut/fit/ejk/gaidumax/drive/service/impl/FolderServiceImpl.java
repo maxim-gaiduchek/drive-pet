@@ -4,6 +4,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.dto.BaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FolderDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
+import cz.cvut.fit.ejk.gaidumax.drive.exception.ValidationException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.code.FolderExceptionCode;
 import cz.cvut.fit.ejk.gaidumax.drive.mapper.FolderMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.repository.FolderRepository;
@@ -12,6 +13,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -38,14 +40,18 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public Folder create(FolderDto folderDto) {
         var folder = folderMapper.toEntity(folderDto);
-        enrichWithEntities(folder, folderDto);
+        enrichWithAuthor(folder);
+        enrichWithParentFolder(folder, folderDto);
         return folderRepository.save(folder);
     }
 
-    private void enrichWithEntities(Folder folder, FolderDto folderDto) {
-        var author = userService.getByIdOrThrow(1L);
-        var parentFolder = fetchFolder(folderDto.getParentFolder());
+    private void enrichWithAuthor(Folder folder) {
+        var author = userService.getByIdOrThrow(1L); // TODO fetch from security context
         folder.setAuthor(author);
+    }
+
+    private void enrichWithParentFolder(Folder folder, FolderDto folderDto) {
+        var parentFolder = fetchFolder(folderDto.getParentFolder());
         folder.setParentFolder(parentFolder);
     }
 
@@ -58,9 +64,18 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public Folder update(Long id, FolderDto folderDto) {
+        checkUpdatePossibility(id, folderDto);
         var folder = getByIdOrThrow(id);
         folder.setName(folderDto.getName());
+        enrichWithParentFolder(folder, folderDto);
         return folderRepository.save(folder);
+    }
+
+    private void checkUpdatePossibility(Long id, FolderDto folderDto) {
+        var parentFolderDto = folderDto.getParentFolder();
+        if (parentFolderDto != null && Objects.equals(parentFolderDto.getId(), id)) {
+            throw new ValidationException(FolderExceptionCode.FOLDER_AND_ITS_PARENT_FOLDER_MUST_NOT_BE_EQUALS, id);
+        }
     }
 
     @Override

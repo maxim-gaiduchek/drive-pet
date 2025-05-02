@@ -17,8 +17,6 @@ import java.util.List;
 @SuperBuilder
 public class ItemSearchDto extends PageableDto {
 
-    @QueryParam("authorIds")
-    private List<Long> authorIds;
     @QueryParam("types")
     private List<ItemType> types;
     @QueryParam("parentFolderId")

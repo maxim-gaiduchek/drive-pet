@@ -40,17 +40,23 @@ public class FileServiceImpl implements FileService {
                 .orElseThrow(() -> new EntityNotFoundException(FileExceptionCode.FILE_DOES_NOT_EXIST, id));
     }
 
+    // TODO change it when file system will be released
     @Override
     public File create(FileDto fileDto) {
         var file = fileMapper.toEntity(fileDto);
-        enrichWithEntities(file, fileDto);
+        file.setPath("image/png");
+        enrichWithAuthor(file);
+        enrichWithParentFolder(file, fileDto.getParentFolder());
         return fileRepository.save(file);
     }
 
-    private void enrichWithEntities(File file, FileDto fileDto) {
-        var author = userService.getByIdOrThrow(1L);
-        var parentFolder = fetchFolder(fileDto.getParentFolder());
+    private void enrichWithAuthor(File file) {
+        var author = userService.getByIdOrThrow(1L); // TODO fetch from security context
         file.setAuthor(author);
+    }
+
+    private void enrichWithParentFolder(File file, BaseInfoDto parentFolderDto) {
+        var parentFolder = fetchFolder(parentFolderDto);
         file.setParentFolder(parentFolder);
     }
 
@@ -65,6 +71,7 @@ public class FileServiceImpl implements FileService {
     public File update(Long id, UpdateFileDto fileDto) {
         var file = getByIdOrThrow(id);
         file.setFileName(fileDto.getFileName());
+        enrichWithParentFolder(file, fileDto.getParentFolder());
         return fileRepository.save(file);
     }
 

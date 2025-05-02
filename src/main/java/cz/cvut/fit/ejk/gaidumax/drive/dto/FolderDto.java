@@ -20,7 +20,6 @@ public class FolderDto {
     private Long id;
     @NotBlank(message = "Folder name must not be blank")
     private String name;
-    @NotBlank(message = "Folder parent must not be null")
     @Valid
     private BaseInfoDto parentFolder;
     private ZonedDateTime createdAt;

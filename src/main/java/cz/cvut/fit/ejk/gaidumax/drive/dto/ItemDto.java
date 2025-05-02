@@ -13,6 +13,7 @@ import lombok.Setter;
 @Builder
 public class ItemDto {
 
+    private Long id;
     private String name;
     private String type;
     private Long size;
