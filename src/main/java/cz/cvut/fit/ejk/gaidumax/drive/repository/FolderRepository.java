@@ -2,10 +2,8 @@ package cz.cvut.fit.ejk.gaidumax.drive.repository;
 
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import jakarta.enterprise.context.ApplicationScoped;
-import org.apache.commons.collections4.ListUtils;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @ApplicationScoped
