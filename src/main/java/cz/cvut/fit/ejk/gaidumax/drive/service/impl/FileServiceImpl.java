@@ -12,6 +12,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.repository.FileRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FolderService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
+import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContextProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -28,6 +29,8 @@ public class FileServiceImpl implements FileService {
     UserService userService;
     @Inject
     FolderService folderService;
+    @Inject
+    SecurityContextProvider securityContextProvider;
 
     @Override
     public Optional<File> findById(Long id) {
@@ -51,7 +54,8 @@ public class FileServiceImpl implements FileService {
     }
 
     private void enrichWithAuthor(File file) {
-        var author = userService.getByIdOrThrow(1L); // TODO fetch from security context
+        var userId = securityContextProvider.getUserId();
+        var author = userService.getByIdOrThrow(userId);
         file.setAuthor(author);
     }
 

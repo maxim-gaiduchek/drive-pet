@@ -10,6 +10,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.mapper.FolderMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.repository.FolderRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FolderService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
+import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContextProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -26,6 +27,8 @@ public class FolderServiceImpl implements FolderService {
     FolderMapper folderMapper;
     @Inject
     UserService userService;
+    @Inject
+    SecurityContextProvider securityContextProvider;
 
     @Override
     public Optional<Folder> findById(Long id) {
@@ -53,7 +56,8 @@ public class FolderServiceImpl implements FolderService {
     }
 
     private void enrichWithAuthor(Folder folder) {
-        var author = userService.getByIdOrThrow(1L); // TODO fetch from security context
+        var userId = securityContextProvider.getUserId();
+        var author = userService.getByIdOrThrow(userId);
         folder.setAuthor(author);
     }
 
