@@ -1,6 +1,5 @@
 package cz.cvut.fit.ejk.gaidumax.drive.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,9 +11,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class BaseInfoDto {
+public class ItemDto {
 
-    @NotNull(message = "Id must not be null")
     private Long id;
     private String name;
+    private String type;
+    private Long size;
+    private Long parentFolderId;
 }

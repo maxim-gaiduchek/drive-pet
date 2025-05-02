@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum UserExceptionCode implements ExceptionCode {
+public enum ValidationExceptionCode implements ExceptionCode {
 
-    USER_DOES_NOT_EXIST("API-USR-001", "User with id %d does not exist"),
+    INVALID_DTO("API-VLD-001", "Invalid DTO"),
     ;
 
     private final String code;

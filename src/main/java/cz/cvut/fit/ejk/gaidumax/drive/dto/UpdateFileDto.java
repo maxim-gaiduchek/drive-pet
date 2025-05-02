@@ -2,26 +2,23 @@ package cz.cvut.fit.ejk.gaidumax.drive.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.ZonedDateTime;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class FolderDto {
+public class UpdateFileDto {
 
-    private Long id;
-    @NotBlank(message = "Folder name must not be blank")
-    private String name;
+    @NotBlank(message = "File name must not be neither empty nor blank")
+    private String fileName;
+    @NotNull(message = "File parent must not be null")
     @Valid
     private BaseInfoDto parentFolder;
-    private ZonedDateTime createdAt;
-    private ZonedDateTime updatedAt;
 }

@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum UserExceptionCode implements ExceptionCode {
+public enum FileExceptionCode implements ExceptionCode {
 
-    USER_DOES_NOT_EXIST("API-USR-001", "User with id %d does not exist"),
+    FILE_DOES_NOT_EXIST("API-FIL-001", "File with id %d does not exist"),
     ;
 
     private final String code;

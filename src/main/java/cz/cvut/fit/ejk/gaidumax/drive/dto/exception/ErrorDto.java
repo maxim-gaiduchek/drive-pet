@@ -1,4 +1,4 @@
-package cz.cvut.fit.ejk.gaidumax.drive.dto;
+package cz.cvut.fit.ejk.gaidumax.drive.dto.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +19,8 @@ import java.time.LocalDateTime;
 public class ErrorDto {
 
     private String status;
-    private LocalDateTime timestamp;
     private String code;
     private String description;
+    private List<ValidationErrorDto> errors;
+    private LocalDateTime timestamp;
 }
