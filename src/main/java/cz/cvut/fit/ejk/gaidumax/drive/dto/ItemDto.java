@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -13,9 +15,9 @@ import lombok.Setter;
 @Builder
 public class ItemDto {
 
-    private Long id;
+    private UUID id;
     private String name;
     private String type;
     private Long size;
-    private Long parentFolderId;
+    private UUID parentFolderId;
 }
