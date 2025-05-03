@@ -3,6 +3,7 @@ package cz.cvut.fit.ejk.gaidumax.drive.controller;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.ItemDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.ItemSearchDto;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.ItemService;
+import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
@@ -20,6 +21,7 @@ public class ItemController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
     public List<ItemDto> findAll(@BeanParam ItemSearchDto searchDto) {
         return itemService.findAll(searchDto);
     }

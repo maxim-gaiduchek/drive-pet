@@ -4,6 +4,8 @@ import cz.cvut.fit.ejk.gaidumax.drive.dto.FileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.mapper.FileMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
+import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.AuthService;
+import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -25,12 +27,16 @@ public class FileController {
     FileService fileService;
     @Inject
     FileMapper fileMapper;
+    @Inject
+    AuthService authService;
 
     @Deprecated(forRemoval = true)
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
     public FileDto get(@PathParam("id") UUID id) {
+        authService.checkUserHasAccessToFile(id);
         var file = fileService.getByIdOrThrow(id);
         return fileMapper.toDto(file);
     }
@@ -38,6 +44,7 @@ public class FileController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
     public FileDto create(@Valid FileDto fileDto) {
         var file = fileService.create(fileDto);
         return fileMapper.toDto(file);
@@ -47,14 +54,18 @@ public class FileController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
     public FileDto update(@PathParam("id") UUID id, @Valid UpdateFileDto fileDto) {
+        authService.checkUserHasAccessToFile(id);
         var file = fileService.update(id, fileDto);
         return fileMapper.toDto(file);
     }
 
     @DELETE
     @Path("/{id}")
+    @Authenticated
     public void update(@PathParam("id") UUID id) {
+        authService.checkUserHasAccessToFile(id);
         fileService.delete(id);
     }
 }
