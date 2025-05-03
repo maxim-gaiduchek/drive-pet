@@ -4,7 +4,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class FileRepository extends BaseEntityRepository<File> {
+public class FileRepository extends UuidBaseEntityRepository<File> {
 
     public FileRepository() {
         super(File.class);

@@ -16,6 +16,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
+import java.util.UUID;
 
 @Path("/folders")
 public class FolderController {
@@ -29,7 +30,7 @@ public class FolderController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDto get(@PathParam("id") Long id) {
+    public FolderDto get(@PathParam("id") UUID id) {
         var folder = folderService.getByIdOrThrow(id);
         return folderMapper.toDto(folder);
     }
@@ -37,7 +38,7 @@ public class FolderController {
     @GET
     @Path("/{id}/parents")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<FolderDto> getAllParentFolder(@PathParam("id") Long id) {
+    public List<FolderDto> getAllParentFolder(@PathParam("id") UUID id) {
         var folders = folderService.getAllParentFolders(id);
         return folderMapper.toDtos(folders);
     }
@@ -54,14 +55,14 @@ public class FolderController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDto update(@PathParam("id") Long id, @Valid FolderDto folderDto) {
+    public FolderDto update(@PathParam("id") UUID id, @Valid FolderDto folderDto) {
         var folder = folderService.update(id, folderDto);
         return folderMapper.toDto(folder);
     }
 
     @DELETE
     @Path("/{id}")
-    public void update(@PathParam("id") Long id) {
+    public void update(@PathParam("id") UUID id) {
         folderService.delete(id);
     }
 }

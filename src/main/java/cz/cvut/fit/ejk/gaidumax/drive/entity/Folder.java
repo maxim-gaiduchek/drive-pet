@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-public class Folder extends BaseEntity {
+public class Folder extends UuidBaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;

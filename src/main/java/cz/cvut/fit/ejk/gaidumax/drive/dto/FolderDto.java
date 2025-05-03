@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,11 +18,11 @@ import java.time.ZonedDateTime;
 @Builder
 public class FolderDto {
 
-    private Long id;
+    private UUID id;
     @NotBlank(message = "Folder name must not be blank")
     private String name;
     @Valid
-    private BaseInfoDto parentFolder;
+    private UuidBaseInfoDto parentFolder;
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
 }

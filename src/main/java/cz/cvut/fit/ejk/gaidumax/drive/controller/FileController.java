@@ -16,6 +16,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import java.util.UUID;
+
 @Path("/files")
 public class FileController {
 
@@ -28,7 +30,7 @@ public class FileController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public FileDto get(@PathParam("id") Long id) {
+    public FileDto get(@PathParam("id") UUID id) {
         var file = fileService.getByIdOrThrow(id);
         return fileMapper.toDto(file);
     }
@@ -45,14 +47,14 @@ public class FileController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FileDto update(@PathParam("id") Long id, @Valid UpdateFileDto fileDto) {
+    public FileDto update(@PathParam("id") UUID id, @Valid UpdateFileDto fileDto) {
         var file = fileService.update(id, fileDto);
         return fileMapper.toDto(file);
     }
 
     @DELETE
     @Path("/{id}")
-    public void update(@PathParam("id") Long id) {
+    public void update(@PathParam("id") UUID id) {
         fileService.delete(id);
     }
 }

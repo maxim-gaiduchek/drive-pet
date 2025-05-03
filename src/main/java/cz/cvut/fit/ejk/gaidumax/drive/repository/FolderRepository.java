@@ -5,15 +5,16 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @ApplicationScoped
-public class FolderRepository extends BaseEntityRepository<Folder> {
+public class FolderRepository extends UuidBaseEntityRepository<Folder> {
 
     public FolderRepository() {
         super(Folder.class);
     }
 
-    public List<Folder> findAllParents(Long folderId) {
+    public List<Folder> findAllParents(UUID childFolderId) {
         var query = entityManager.createNativeQuery("""
                             with recursive folder_hierarchy as (
                                 select f.*
@@ -26,7 +27,7 @@ public class FolderRepository extends BaseEntityRepository<Folder> {
                             )
                             select * from folder_hierarchy
                         """, Folder.class)
-                .setParameter("folderId", folderId);
+                .setParameter("folderId", childFolderId);
         var result = query.getResultList();
         Collections.reverse(result);
         return result;
