@@ -5,18 +5,19 @@ import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface FolderService {
 
-    Optional<Folder> findById(Long id);
+    Optional<Folder> findById(UUID id);
 
-    Folder getByIdOrThrow(Long id);
+    Folder getByIdOrThrow(UUID id);
 
-    List<Folder> getAllParentFolders(Long folderId);
+    List<Folder> getAllParentFolders(UUID childFolderId);
     
     Folder create(FolderDto folderDto);
 
-    Folder update(Long id, FolderDto folderDto);
+    Folder update(UUID id, FolderDto folderDto);
 
-    void delete(Long id);
+    void delete(UUID id);
 }

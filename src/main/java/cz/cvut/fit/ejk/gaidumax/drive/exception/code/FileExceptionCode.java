@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum FileExceptionCode implements ExceptionCode {
 
-    FILE_DOES_NOT_EXIST("API-FIL-001", "File with id %d does not exist"),
+    FILE_DOES_NOT_EXIST("API-FILE-001", "File with id %s does not exist"),
     ;
 
     private final String code;

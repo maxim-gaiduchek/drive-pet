@@ -1,7 +1,7 @@
 package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 
-import cz.cvut.fit.ejk.gaidumax.drive.dto.BaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FolderDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.UuidBaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.ValidationException;
@@ -10,12 +10,14 @@ import cz.cvut.fit.ejk.gaidumax.drive.mapper.FolderMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.repository.FolderRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FolderService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
+import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContextProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @ApplicationScoped
 public class FolderServiceImpl implements FolderService {
@@ -26,20 +28,22 @@ public class FolderServiceImpl implements FolderService {
     FolderMapper folderMapper;
     @Inject
     UserService userService;
+    @Inject
+    SecurityContextProvider securityContextProvider;
 
     @Override
-    public Optional<Folder> findById(Long id) {
+    public Optional<Folder> findById(UUID id) {
         return folderRepository.findById(id);
     }
 
     @Override
-    public Folder getByIdOrThrow(Long id) {
+    public Folder getByIdOrThrow(UUID id) {
         return findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(FolderExceptionCode.FOLDER_DOES_NOT_EXIST, id));
     }
 
     @Override
-    public List<Folder> getAllParentFolders(Long folderId) {
+    public List<Folder> getAllParentFolders(UUID folderId) {
         var folder = getByIdOrThrow(folderId);
         return folderRepository.findAllParents(folder.getId());
     }
@@ -53,7 +57,8 @@ public class FolderServiceImpl implements FolderService {
     }
 
     private void enrichWithAuthor(Folder folder) {
-        var author = userService.getByIdOrThrow(1L); // TODO fetch from security context
+        var userId = securityContextProvider.getUserId();
+        var author = userService.getByIdOrThrow(userId);
         folder.setAuthor(author);
     }
 
@@ -62,15 +67,15 @@ public class FolderServiceImpl implements FolderService {
         folder.setParentFolder(parentFolder);
     }
 
-    private Folder fetchFolder(BaseInfoDto folderDto) {
+    private Folder fetchFolder(UuidBaseInfoDto folderDto) {
         return Optional.ofNullable(folderDto)
-                .map(BaseInfoDto::getId)
+                .map(UuidBaseInfoDto::getId)
                 .map(this::getByIdOrThrow)
                 .orElse(null);
     }
 
     @Override
-    public Folder update(Long id, FolderDto folderDto) {
+    public Folder update(UUID id, FolderDto folderDto) {
         checkUpdatePossibility(id, folderDto);
         var folder = getByIdOrThrow(id);
         folder.setName(folderDto.getName());
@@ -78,7 +83,7 @@ public class FolderServiceImpl implements FolderService {
         return folderRepository.save(folder);
     }
 
-    private void checkUpdatePossibility(Long id, FolderDto folderDto) {
+    private void checkUpdatePossibility(UUID id, FolderDto folderDto) {
         var parentFolderDto = folderDto.getParentFolder();
         if (parentFolderDto != null && Objects.equals(parentFolderDto.getId(), id)) {
             throw new ValidationException(FolderExceptionCode.FOLDER_AND_ITS_PARENT_FOLDER_MUST_NOT_BE_EQUALS, id);
@@ -86,7 +91,7 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         var folder = getByIdOrThrow(id);
         folderRepository.delete(folder);
     }

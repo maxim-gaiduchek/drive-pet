@@ -20,5 +20,5 @@ public class UpdateFileDto {
     private String fileName;
     @NotNull(message = "File parent must not be null")
     @Valid
-    private BaseInfoDto parentFolder;
+    private UuidBaseInfoDto parentFolder;
 }

@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-public class File extends BaseEntity {
+public class File extends UuidBaseEntity {
 
     @Column(name = "file_name", nullable = false)
     private String fileName;

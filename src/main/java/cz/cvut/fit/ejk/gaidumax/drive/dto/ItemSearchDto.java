@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,5 +21,5 @@ public class ItemSearchDto extends PageableDto {
     @QueryParam("types")
     private List<ItemType> types;
     @QueryParam("parentFolderId")
-    private Long parentFolderId;
+    private UUID parentFolderId;
 }

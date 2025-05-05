@@ -2,6 +2,7 @@ package cz.cvut.fit.ejk.gaidumax.drive.repository;
 
 import cz.cvut.fit.ejk.gaidumax.drive.dto.ItemDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.ItemSearchDto;
+import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContextProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,8 @@ public class ItemNaiveRepository {
 
     @Inject
     EntityManager entityManager;
+    @Inject
+    SecurityContextProvider securityContextProvider;
 
     public List<ItemDto> findAll(ItemSearchDto searchDto) {
         var sql = new StringBuilder("""
@@ -35,7 +38,8 @@ public class ItemNaiveRepository {
                            fol.user_id as authorId
                     from folder fol
                 ) item
-                where coalesce(:parentFolderId, -1) = coalesce(item.parentFolderId, -1)
+                where (item.parentFolderId is null and cast(:parentFolderId as uuid) is null
+                       or item.parentFolderId = cast(:parentFolderId as uuid))
                   and item.authorId = :authorId
                 """);
 
@@ -44,10 +48,10 @@ public class ItemNaiveRepository {
             sql.append("and item.type in (:types)");
         }
 
+        var authorId = securityContextProvider.getUserId();
         var query = entityManager.createNativeQuery(sql.toString(), ItemDto.class)
                 .setParameter("parentFolderId", searchDto.getParentFolderId())
-                .setParameter("authorId", 1L); // TODO fetch from security context
-
+                .setParameter("authorId", authorId);
 
         if (CollectionUtils.isNotEmpty(searchDto.getTypes())) {
             var typeStrings = searchDto.getTypes().stream().map(Enum::name).toList();

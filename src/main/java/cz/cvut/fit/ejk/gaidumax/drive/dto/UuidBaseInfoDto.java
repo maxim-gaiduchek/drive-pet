@@ -1,5 +1,6 @@
 package cz.cvut.fit.ejk.gaidumax.drive.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,11 +14,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class ItemDto {
+public class UuidBaseInfoDto {
 
+    @NotNull(message = "Id must not be null")
     private UUID id;
     private String name;
-    private String type;
-    private Long size;
-    private UUID parentFolderId;
 }

@@ -1,8 +1,8 @@
 package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 
-import cz.cvut.fit.ejk.gaidumax.drive.dto.BaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.UuidBaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
@@ -12,10 +12,12 @@ import cz.cvut.fit.ejk.gaidumax.drive.repository.FileRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FolderService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
+import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContextProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @ApplicationScoped
 public class FileServiceImpl implements FileService {
@@ -28,14 +30,16 @@ public class FileServiceImpl implements FileService {
     UserService userService;
     @Inject
     FolderService folderService;
+    @Inject
+    SecurityContextProvider securityContextProvider;
 
     @Override
-    public Optional<File> findById(Long id) {
+    public Optional<File> findById(UUID id) {
         return fileRepository.findById(id);
     }
 
     @Override
-    public File getByIdOrThrow(Long id) {
+    public File getByIdOrThrow(UUID id) {
         return findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(FileExceptionCode.FILE_DOES_NOT_EXIST, id));
     }
@@ -51,24 +55,25 @@ public class FileServiceImpl implements FileService {
     }
 
     private void enrichWithAuthor(File file) {
-        var author = userService.getByIdOrThrow(1L); // TODO fetch from security context
+        var userId = securityContextProvider.getUserId();
+        var author = userService.getByIdOrThrow(userId);
         file.setAuthor(author);
     }
 
-    private void enrichWithParentFolder(File file, BaseInfoDto parentFolderDto) {
+    private void enrichWithParentFolder(File file, UuidBaseInfoDto parentFolderDto) {
         var parentFolder = fetchFolder(parentFolderDto);
         file.setParentFolder(parentFolder);
     }
 
-    private Folder fetchFolder(BaseInfoDto folderDto) {
+    private Folder fetchFolder(UuidBaseInfoDto folderDto) {
         return Optional.ofNullable(folderDto)
-                .map(BaseInfoDto::getId)
+                .map(UuidBaseInfoDto::getId)
                 .map(folderService::getByIdOrThrow)
                 .orElse(null);
     }
 
     @Override
-    public File update(Long id, UpdateFileDto fileDto) {
+    public File update(UUID id, UpdateFileDto fileDto) {
         var file = getByIdOrThrow(id);
         file.setFileName(fileDto.getFileName());
         enrichWithParentFolder(file, fileDto.getParentFolder());
@@ -76,7 +81,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         var file = getByIdOrThrow(id);
         fileRepository.delete(file);
     }

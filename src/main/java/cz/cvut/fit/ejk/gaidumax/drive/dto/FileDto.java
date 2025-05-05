@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,13 +18,13 @@ import java.time.ZonedDateTime;
 @Builder
 public class FileDto {
 
-    private Long id;
+    private UUID id;
     @NotBlank(message = "File name must not be null")
     private String fileName;
     private String fileType;
     private Long size;
     @Valid
-    private BaseInfoDto parentFolder;
+    private UuidBaseInfoDto parentFolder;
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
 }
