@@ -10,7 +10,7 @@ import lombok.experimental.UtilityClass;
 public class JwtUtils {
 
     public JwtAuthentication generate(Claims claims) {
-        var userId = claims.get(JwtClaimsConstants.USER_ID_CLAIMS, Long.class);
+        var userId = claims.get(JwtClaimsConstants.USER_ID_KEY, Long.class);
         var role = fetchRole(claims);
         var auth = new JwtAuthentication();
         auth.setUserId(userId);
@@ -19,7 +19,7 @@ public class JwtUtils {
     }
 
     private Role fetchRole(Claims claims) {
-        var roleStr = claims.get(JwtClaimsConstants.ROLE_CLAIMS, String.class);
+        var roleStr = claims.get(JwtClaimsConstants.USER_ROLE_KEY, String.class);
         return Role.valueOf(roleStr);
     }
 }

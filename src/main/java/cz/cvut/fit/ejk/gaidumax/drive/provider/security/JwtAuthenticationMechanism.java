@@ -9,8 +9,13 @@ import io.quarkus.vertx.http.runtime.security.HttpAuthenticationMechanism;
 import io.smallrye.mutiny.Uni;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Optional;
 
 @ApplicationScoped
+@Slf4j
 public class JwtAuthenticationMechanism implements HttpAuthenticationMechanism {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
@@ -19,12 +24,15 @@ public class JwtAuthenticationMechanism implements HttpAuthenticationMechanism {
     @Override
     public Uni<SecurityIdentity> authenticate(RoutingContext context, IdentityProviderManager identityProviderManager) {
         var header = context.request().getHeader(AUTHORIZATION_HEADER);
+        if (StringUtils.isBlank(header)) {
+            return Uni.createFrom().nullItem();
+        }
         var tokenRequest = new TokenAuthenticationRequest(new TokenCredential(header, JWT_TYPE));
         return identityProviderManager.authenticate(tokenRequest);
     }
 
     @Override
     public Uni<ChallengeData> getChallenge(RoutingContext context) {
-        return null;
+        return Uni.createFrom().optional(Optional.empty());
     }
 }

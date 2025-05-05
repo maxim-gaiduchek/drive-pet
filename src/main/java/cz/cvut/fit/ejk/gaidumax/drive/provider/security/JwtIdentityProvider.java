@@ -27,7 +27,7 @@ public class JwtIdentityProvider implements IdentityProvider<TokenAuthentication
                                               AuthenticationRequestContext authenticationRequestContext) {
         var header = authenticationRequest.getToken().getToken();
         if (header == null) {
-            return Uni.createFrom().nothing();
+            return Uni.createFrom().nullItem();
         }
         if (!header.startsWith(BEARER_PREFIX)) {
             return Uni.createFrom().failure(new AccessException(AccessExceptionCode.TOKEN_INVALID));
