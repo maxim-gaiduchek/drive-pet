@@ -30,7 +30,7 @@ public class UserRepository extends BaseEntityRepository<User> {
 
     public boolean existsByEmail(String email) {
         return entityManager.createQuery("""
-                                    select exists(u)
+                                    select count(u) > 0
                                     from User u
                                     where u.email = :email
                         """, Boolean.class)

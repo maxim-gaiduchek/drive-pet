@@ -6,6 +6,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.dto.security.RegistrationDto;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -23,7 +24,7 @@ public class AuthController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
-    public JwtResponseDto login(LoginDto loginDto) {
+    public JwtResponseDto login(@Valid LoginDto loginDto) {
         return userService.login(loginDto);
     }
 
@@ -32,7 +33,7 @@ public class AuthController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
-    public JwtResponseDto register(RegistrationDto registrationDto) {
+    public JwtResponseDto register(@Valid RegistrationDto registrationDto) {
         return userService.register(registrationDto);
     }
 }
