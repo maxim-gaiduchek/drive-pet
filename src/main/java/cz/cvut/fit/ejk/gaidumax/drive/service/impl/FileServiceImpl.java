@@ -1,15 +1,15 @@
 package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 
-import cz.cvut.fit.ejk.gaidumax.drive.dto.FileDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.FileForm;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UuidBaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.code.FileExceptionCode;
-import cz.cvut.fit.ejk.gaidumax.drive.mapper.FileMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.repository.FileRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
+import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileStorage;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FolderService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContextProvider;
@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class FileServiceImpl implements FileService {
@@ -25,15 +26,16 @@ public class FileServiceImpl implements FileService {
     @Inject
     FileRepository fileRepository;
     @Inject
-    FileMapper fileMapper;
-    @Inject
     UserService userService;
     @Inject
     FolderService folderService;
     @Inject
     SecurityContextProvider securityContextProvider;
+    @Inject
+    FileStorage storage;
 
     @Override
+
     public Optional<File> findById(UUID id) {
         return fileRepository.findById(id);
     }
@@ -44,14 +46,27 @@ public class FileServiceImpl implements FileService {
                 .orElseThrow(() -> new EntityNotFoundException(FileExceptionCode.FILE_DOES_NOT_EXIST, id));
     }
 
-    // TODO change it when file system will be released
     @Override
-    public File create(FileDto fileDto) {
-        var file = fileMapper.toEntity(fileDto);
-        file.setPath("image/png");
+    public File create(FileForm fileForm) {
+        var userId = securityContextProvider.getUserId();
+        var fileDto = fileForm.getFileDto();
+        var folderPath = buildFilePath(fileDto.getParentFolder());
+        var filePath = storage.upload(fileForm.getFile(), userId, folderPath);
+        var file = File.builder()
+                .s3FilePath(filePath)
+                .build();
         enrichWithAuthor(file);
         enrichWithParentFolder(file, fileDto.getParentFolder());
         return fileRepository.save(file);
+    }
+
+    private String buildFilePath(UuidBaseInfoDto parentFolder) {
+        if (parentFolder == null) {
+            return "/";
+        }
+        return folderService.getAllParentFolders(parentFolder.getId()).stream()
+                .map(Folder::getName)
+                .collect(Collectors.joining("/")) + "/";
     }
 
     private void enrichWithAuthor(File file) {

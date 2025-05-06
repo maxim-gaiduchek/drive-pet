@@ -24,8 +24,8 @@ public class File extends UuidBaseEntity {
     private String fileName;
     @Column(name = "file_type", nullable = false)
     private String fileType;
-    @Column(name = "path", nullable = false, length = 1023)
-    private String path;
+    @Column(name = "s3_file_path", nullable = false, length = 1023)
+    private String s3FilePath;
     @Column(name = "size", nullable = false)
     private Long size;
     @ManyToOne

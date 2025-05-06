@@ -1,6 +1,6 @@
 package cz.cvut.fit.ejk.gaidumax.drive.service.interfaces;
 
-import cz.cvut.fit.ejk.gaidumax.drive.dto.FileDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.FileForm;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
 
@@ -13,7 +13,7 @@ public interface FileService {
 
     File getByIdOrThrow(UUID id);
 
-    File create(FileDto fileDto);
+    File create(FileForm fileForm);
 
     File update(UUID id, UpdateFileDto fileDto);
 
