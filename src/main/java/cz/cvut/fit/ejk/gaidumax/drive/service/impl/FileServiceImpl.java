@@ -16,17 +16,19 @@ import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContextProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileInputStream;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @ApplicationScoped
 public class FileServiceImpl implements FileService {
+
+    private static final String FILE_PATH_TEMPLATE = "%s/%d/%s";
 
     @Inject
     FileRepository fileRepository;
@@ -52,39 +54,35 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    @Transactional
     public File create(FileForm fileForm) {
         try {
             var userId = securityContextProvider.getUserId();
             var fileUpload = fileForm.getFile();
             var fileDto = fileForm.getFileDto();
             var fileName = fileUpload.fileName();
-            var filePath = buildFilePath(fileDto.getParentFolder(), fileName);
-            var fis = new FileInputStream(fileUpload.uploadedFile().toFile());
-            var storageFilePath = storage.upload(fis, userId, filePath);
             var file = File.builder()
                     .fileName(fileName)
                     .fileType(fileUpload.contentType())
-                    .s3FilePath(storageFilePath)
                     .size(fileUpload.size())
                     .build();
-            enrichWithAuthor(file);
-            enrichWithParentFolder(file, fileDto.getParentFolder());
-            return fileRepository.save(file);
+            var savedFile = fileRepository.save(file);
+            var filePath = buildFilePath(savedFile.getId(), fileName);
+            var fis = new FileInputStream(fileUpload.uploadedFile().toFile());
+            var storageFilePath = storage.upload(fis, userId, filePath);
+            savedFile.setS3FilePath(storageFilePath);
+            enrichWithAuthor(savedFile);
+            enrichWithParentFolder(savedFile, fileDto.getParentFolder());
+            return fileRepository.save(savedFile);
         } catch (Exception e) {
             log.error("File upload error", e);
             throw new FileException(FileExceptionCode.FILE_UPLOAD_ERROR);
         }
     }
 
-    private String buildFilePath(UuidBaseInfoDto parentFolder, String fileName) {
+    private String buildFilePath(UUID fileId, String fileName) {
         var millis = new Date().getTime();
-        if (parentFolder == null) {
-            return "/%d/%s".formatted(millis, fileName);
-        }
-        var folderPath = folderService.getAllParentFolders(parentFolder.getId()).stream()
-                .map(Folder::getName)
-                .collect(Collectors.joining("/"));
-        return "/%s/%d/%s".formatted(folderPath, millis, fileName);
+        return FILE_PATH_TEMPLATE.formatted(fileId, millis, fileName);
     }
 
     private void enrichWithAuthor(File file) {

@@ -26,4 +26,3 @@ services:
       - AWS_SECRET_ACCESS_KEY=secretKey
     volumes:
       - ./localstack-setup.sh:/etc/localstack/init/ready.d/script.sh
-      - ./localstack:/tmp/localstack

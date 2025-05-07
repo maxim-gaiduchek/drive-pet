@@ -21,6 +21,7 @@ public class FileDto {
     private String fileName;
     private String fileType;
     private Long size;
+    private String filePath;
     @Valid
     private UuidBaseInfoDto parentFolder;
     private ZonedDateTime createdAt;

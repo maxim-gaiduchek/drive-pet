@@ -24,12 +24,12 @@ public class File extends UuidBaseEntity {
     private String fileName;
     @Column(name = "file_type", nullable = false)
     private String fileType;
-    @Column(name = "s3_file_path", nullable = false, length = 1023)
+    @Column(name = "s3_file_path", length = 1023)
     private String s3FilePath;
     @Column(name = "size", nullable = false)
     private Long size;
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User author;
     @ManyToOne
     @JoinColumn(name = "folder_id")
