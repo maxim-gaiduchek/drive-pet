@@ -14,3 +14,15 @@ services:
     restart: on-failure
     volumes:
       - /Users/{username}/volumes/postgres
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=accessKey
+      - AWS_SECRET_ACCESS_KEY=secretKey
+    volumes:
+      - ./localstack-setup.sh:/etc/localstack/init/ready.d/script.sh

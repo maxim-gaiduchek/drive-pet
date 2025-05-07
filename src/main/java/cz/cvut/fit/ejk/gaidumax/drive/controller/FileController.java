@@ -1,6 +1,7 @@
 package cz.cvut.fit.ejk.gaidumax.drive.controller;
 
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FileDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.FileForm;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.mapper.FileMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
@@ -42,11 +43,11 @@ public class FileController {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     @Authenticated
-    public FileDto create(@Valid FileDto fileDto) {
-        var file = fileService.create(fileDto);
+    public FileDto create(@Valid FileForm fileForm) {
+        var file = fileService.create(fileForm);
         return fileMapper.toDto(file);
     }
 
