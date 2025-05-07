@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.BucketAlreadyExistsException;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -28,7 +29,11 @@ public class S3FileStorage implements FileStorage {
 
     @PostConstruct
     void init() {
-        client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
+        try {
+            client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
+        } catch (BucketAlreadyExistsException ignored) {
+            // it already exists, nothing to do
+        }
     }
 
     @Override
