@@ -9,8 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jboss.resteasy.reactive.PartType;
-
-import java.io.FileInputStream;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,7 +21,7 @@ public class FileForm {
     @NotNull(message = "File content must not be null")
     @FormParam("file")
     @PartType(MediaType.APPLICATION_OCTET_STREAM)
-    private FileInputStream file;
+    private FileUpload file;
 
     @NotNull(message = "File DTO must not be null")
     @FormParam("dto")

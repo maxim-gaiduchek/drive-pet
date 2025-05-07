@@ -7,7 +7,6 @@ import cz.cvut.fit.ejk.gaidumax.drive.mapper.FileMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.AuthService;
 import io.quarkus.security.Authenticated;
-import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -46,7 +45,7 @@ public class FileController {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @PermitAll
+    @Authenticated
     public FileDto create(@Valid FileForm fileForm) {
         var file = fileService.create(fileForm);
         return fileMapper.toDto(file);
