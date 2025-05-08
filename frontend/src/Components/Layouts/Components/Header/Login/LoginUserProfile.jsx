@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Button, Flex, Tooltip} from "antd";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {LogoutOutlined, UserOutlined} from "@ant-design/icons";
 import {LoginRegisterButtons} from "./LoginRegisterButtons";
 import {getUser} from "../../../../../Services/UserService";
