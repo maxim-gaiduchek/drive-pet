@@ -2,6 +2,7 @@ package cz.cvut.fit.ejk.gaidumax.drive.controller;
 
 import cz.cvut.fit.ejk.gaidumax.drive.dto.ItemDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.ItemSearchDto;
+import cz.cvut.fit.ejk.gaidumax.drive.mapper.ItemMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.ItemService;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
@@ -18,11 +19,15 @@ public class ItemController {
 
     @Inject
     ItemService itemService;
+    @Inject
+    ItemMapper itemMapper;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Authenticated
     public List<ItemDto> findAll(@BeanParam ItemSearchDto searchDto) {
-        return itemService.findAll(searchDto);
+        var filter = itemMapper.searchDtoToFilter(searchDto);
+        var items = itemService.findAll(filter);
+        return itemMapper.toDtos(items);
     }
 }

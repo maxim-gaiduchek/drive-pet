@@ -22,8 +22,7 @@ export function LoginUserProfile() {
         logout()
             .then(() => {
                 setUser({});
-                console.log(user)
-                navigate("/drive");
+                navigate("/login");
             })
     }
     return (user.id ?
