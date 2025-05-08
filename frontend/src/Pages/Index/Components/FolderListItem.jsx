@@ -1,14 +1,22 @@
 import {FolderOutlined} from "@ant-design/icons";
-import {Button, List} from "antd";
+import {List, Skeleton} from "antd";
 
-export function FolderListItem({folder, setParentFolderId}) {
+export function FolderListItem({folder, setFolderToParent}) {
     return (
-        <Button onClick={() => setParentFolderId(folder.id)}>
-            <List.Item.Meta
-                avatar={<FolderOutlined/>}
-                title={folder.name}
-                /*description="Ant Design, a design language for background applications, is refined by Ant UED Team"*/
-            />
-        </Button>
+        <List.Item
+            onClick={setFolderToParent}
+            actions={[
+                <a key="list-loadmore-edit">edit</a>,
+                <a key="list-loadmore-more">more</a>
+            ]}
+        >
+            <Skeleton avatar title={false} loading={false} active>
+                <List.Item.Meta
+                    avatar={<FolderOutlined/>}
+                    title={<a>{folder.name}</a>}
+                />
+                <div>content</div>
+            </Skeleton>
+        </List.Item>
     )
 }

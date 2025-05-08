@@ -48,10 +48,17 @@ public class ItemNaiveRepository {
             sql.append("and item.type in (:types)");
         }
 
+        sql.append('\n');
+        sql.append("offset :offset limit :limit");
+
         var authorId = securityContextProvider.getUserId();
+        var page = searchDto.getPage();
+        var pageSize = searchDto.getPageSize();
         var query = entityManager.createNativeQuery(sql.toString(), ItemDto.class)
                 .setParameter("parentFolderId", searchDto.getParentFolderId())
-                .setParameter("authorId", authorId);
+                .setParameter("authorId", authorId)
+                .setParameter("offset", (page - 1) * pageSize)
+                .setParameter("limit", pageSize);
 
         if (CollectionUtils.isNotEmpty(searchDto.getTypes())) {
             var typeStrings = searchDto.getTypes().stream().map(Enum::name).toList();

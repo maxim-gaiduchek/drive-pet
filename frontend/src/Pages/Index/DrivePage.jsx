@@ -1,38 +1,40 @@
 import {MainLayout} from "../../Components/Layouts/MainLayout";
 import {useEffect, useState} from "react";
 import {getItems} from "../../Services/ItemService";
-import {List, Skeleton} from "antd";
+import {List} from "antd";
 import {FileListItem} from "./Components/FileListItem";
 import {FolderListItem} from "./Components/FolderListItem";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 
 export function DrivePage() {
-    document.title = "My Drive | Drive Pet"
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const parentFolderIdParam = urlParams.get("parentFolderId");
-    const sortByParam = urlParams.get("sortBy");
-    const sortDirectionParam = urlParams.get("sortDirection");
-    // const [page, setPage] = useState(pageParam ? +pageParam : 1);
-    // const [pageSize, setPageSize] = useState(pageSizeParam ? +pageSizeParam : 10);
-    const [parentFolderId, setParentFolderId] = useState(parentFolderIdParam ? parentFolderIdParam : null);
-    const [sortBy, setSortBy] = useState(sortByParam ? sortByParam : "createdAt");
-    const [sortDirection, setSortDirection] = useState(sortDirectionParam ? sortDirectionParam : "desc");
+    useEffect(() => {
+        let loginUserId = localStorage.getItem("loginUserId");
+        if (loginUserId === null) {
+            navigate("/login");
+        }
+    }, []);
+
+    const [parentFolder, setParentFolder] = useState({});
+
+    document.title = `${parentFolder.name ? parentFolder.name : "My Drive"} | Drive Pet`
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const parentFolderId = searchParams.get("parentFolderId");
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(20);
+    const [sortBy, setSortBy] = useState("createdAt");
+    const [sortDirection, setSortDirection] = useState("desc");
     const [items, setItems] = useState([]);
     const navigate = useNavigate();
     useEffect(() => {
-        changePath(navigate, parentFolderId, sortBy, sortDirection/*, page, pageSize*/);
         let queryParams = {
             sortBy: sortBy,
             sortDirection: sortDirection,
         };
         if (parentFolderId) {
-            queryParams = {
-                parentFolderId: parentFolderId,
-                ...queryParams
-            }
+            queryParams.parentFolderId = parentFolderId;
         }
-        getItems(/*page, pageSize*/ 1, 20, queryParams)
+        getItems(page, pageSize, queryParams)
             .then(itemPage => {
                 setItems(itemPage);
                 // setPage(itemPage.currentPage);
@@ -54,42 +56,20 @@ export function DrivePage() {
                     width: "100%",
                     margin: "10px 30px"
                 }}
-                renderItem={item => (
-                    <List.Item
-                        actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">more</a>]}
-                    >
-                        <Skeleton avatar title={false} loading={item.loading} active>
-                            {
-                                item.type === 'FOLDER'
-                                    ? <FolderListItem folder={item} setParentFolderId={setParentFolderId}/>
-                                    : <FileListItem file={item}/>
-                            }
-                            <div>content</div>
-                        </Skeleton>
-                    </List.Item>
-                )}
+                renderItem={item =>
+                    item.type === 'FOLDER'
+                        ? <FolderListItem folder={item}
+                                          setFolderToParent={setFolderToParent(item, setParentFolder, setSearchParams)}/>
+                        : <FileListItem file={item}/>
+                }
             />
         </MainLayout>
     )
 }
 
-function changePath(navigate, parentFolderId, sortBy, sortDirection, page, pageSize) {
-    let params = new URLSearchParams();
-    if (parentFolderId) {
-        params.set("parentFolderId", parentFolderId);
+function setFolderToParent(folder, setParentFolder, setSearchParams) {
+    return () => {
+        setParentFolder(folder);
+        setSearchParams({parentFolderId: folder.id})
     }
-    if (sortBy) {
-        params.set("sortBy", sortBy);
-    }
-    if (sortDirection) {
-        params.set("sortDirection", sortDirection);
-    }
-    if (page) {
-        params.set("page", page);
-    }
-    if (pageSize) {
-        params.set("pageSize", pageSize);
-    }
-    const newUrl = `/drive?${params.toString()}`;
-    navigate(newUrl);
 }
