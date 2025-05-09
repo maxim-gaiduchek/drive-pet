@@ -5,6 +5,7 @@ import {Button, Divider, Flex, List, Select} from "antd";
 import {FileListItem} from "./Components/FileListItem";
 import {FolderListItem} from "./Components/FolderListItem";
 import {useNavigate, useSearchParams} from "react-router-dom";
+import Search from "antd/lib/input/Search";
 
 const PAGE_SIZE = 20;
 const sorts = {
@@ -39,6 +40,7 @@ export function DrivePage() {
     const [loading, setLoading] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const parentFolderId = searchParams.get("parentFolderId");
+    const [name, setName] = useState("")
     const [nextPage, setNextPage] = useState(1);
     const [hasNext, setHasNext] = useState(true);
     const [sortBy, setSortBy] = useState("createdAt");
@@ -50,6 +52,7 @@ export function DrivePage() {
         }
         setLoading(true);
         let queryParams = {
+            name: name,
             sortBy: sortBy,
             sortDirection: sortDirection,
         };
@@ -79,7 +82,7 @@ export function DrivePage() {
     }, []);
     useEffect(() => {
         loadMoreData(1, true);
-    }, [parentFolderId, sortBy, sortDirection]);
+    }, [parentFolderId, name, sortBy, sortDirection]);
     const getSort = () => {
         let sort = Object.entries(sorts)
             .filter(([_, sort]) => sort.sortBy === sortBy && sort.sortDirection === sortDirection);
@@ -129,17 +132,17 @@ export function DrivePage() {
                         alignItems: "center",
                         justifyContent: "space-between",
                         flexWrap: "nowrap",
-                        width: "50%"
+                        width: "1000%"
                     }}>
                         <Select placeholder={"Newest"} value={getSort()} onSelect={value => setSort(value)}
                                 options={Object.entries(sorts).map(([key, value]) => {
                                     return {label: value.label, value: key}
                                 })}
                                 disabled={loading}
-                                style={{width: "50%", margin: "10px 10px"}}/>
-                        {/*<Search placeholder={"Search name..."} value={name} allowClear={true}
+                                style={{width: "10%", margin: "10px 10px"}}/>
+                        <Search placeholder={"Search name..."} value={name} allowClear={true}
                             onChange={e => setName(e.target.value)}
-                            style={{width: "50%", margin: "10px 10px"}}/>*/}
+                            style={{width: "30%", margin: "10px 10px"}}/>
                     </Flex>
                 </Flex>
                 <List

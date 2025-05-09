@@ -6,6 +6,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContex
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -29,6 +30,10 @@ public class ItemRepository extends UuidBaseEntityRepository<Item> {
             sql.append('\n');
             sql.append("and i.type in (:types)");
         }
+        if (StringUtils.isNotEmpty(filter.getName())) {
+            sql.append('\n');
+            sql.append("and i.name ilike :name");
+        }
         sql.append('\n');
         var parentFolderId = filter.getParentFolderId();
         if (parentFolderId != null) {
@@ -43,6 +48,9 @@ public class ItemRepository extends UuidBaseEntityRepository<Item> {
                 .setParameter("authorId", authorId);
         if (parentFolderId != null) {
             query.setParameter("parentFolderId", parentFolderId.toString());
+        }
+        if (StringUtils.isNotEmpty(filter.getName())) {
+            query.setParameter("name", "%" + filter.getName() + "%");
         }
         return query.getResultList();
     }

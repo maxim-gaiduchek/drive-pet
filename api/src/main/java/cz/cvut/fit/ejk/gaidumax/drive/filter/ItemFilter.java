@@ -19,6 +19,7 @@ public class ItemFilter extends UuidBaseFilter {
 
     private List<ItemType> types;
     private UUID parentFolderId;
+    private String name;
 
     {
         sortVariants.put("name", List.of("name"));

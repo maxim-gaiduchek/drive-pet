@@ -22,4 +22,6 @@ public class ItemSearchDto extends PageableDto {
     private List<ItemType> types;
     @QueryParam("parentFolderId")
     private UUID parentFolderId;
+    @QueryParam("name")
+    private String name;
 }
