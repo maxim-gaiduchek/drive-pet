@@ -13,7 +13,7 @@ export function FileListItem({file}) {
                 <List.Item.Meta
                     avatar={<FileOutlined/>}
                     title={<a>{file.name}</a>}
-                    description={`Size: ${formatBytes(file.size)}`}
+                    description={`Size: ${formatBytes(file.size)}, By: ${file.author.firstName} ${file.author.lastName} (${file.author.email})`}
                 />
                 <div>content</div>
             </Skeleton>

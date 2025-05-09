@@ -14,6 +14,7 @@ export function FolderListItem({folder, setFolderToParent}) {
                 <List.Item.Meta
                     avatar={<FolderOutlined/>}
                     title={<a>{folder.name}</a>}
+                    description={`By: ${folder.author.firstName} ${folder.author.lastName} (${folder.author.email})`}
                 />
                 <div>content</div>
             </Skeleton>

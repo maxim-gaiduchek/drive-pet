@@ -32,7 +32,7 @@ public class ItemRepository extends UuidBaseEntityRepository<Item> {
         sql.append('\n');
         var parentFolderId = filter.getParentFolderId();
         if (parentFolderId != null) {
-            sql.append("i.parentFolder.id = cast(:parentFolderId as uuid)");
+            sql.append("and i.parentFolder.id = cast(:parentFolderId as uuid)");
         } else {
             sql.append("and i.parentFolder.id is null");
         }

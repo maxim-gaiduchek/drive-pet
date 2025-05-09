@@ -19,5 +19,6 @@ public class ItemDto {
     private String name;
     private String type;
     private Long size;
-    private UUID parentFolderId;
+    private UserDto author;
+    private FolderDto parentFolder;
 }
