@@ -1,12 +1,34 @@
 import {MainLayout} from "../../Components/Layouts/MainLayout";
 import {useEffect, useState} from "react";
 import {getItems} from "../../Services/ItemService";
-import {Button, Divider, List} from "antd";
+import {Button, Divider, Flex, List, Select} from "antd";
 import {FileListItem} from "./Components/FileListItem";
 import {FolderListItem} from "./Components/FolderListItem";
 import {useNavigate, useSearchParams} from "react-router-dom";
 
 const PAGE_SIZE = 20;
+const sorts = {
+    "newest": {
+        label: "Newest",
+        sortBy: "createdAt",
+        sortDirection: "desc",
+    },
+    "oldest": {
+        label: "Oldest",
+        sortBy: "createdAt",
+        sortDirection: "asc",
+    },
+    "name asc": {
+        label: "Name (a -> z)",
+        sortBy: "name",
+        sortDirection: "asc",
+    },
+    "name desc": {
+        label: "Name (z -> a)",
+        sortBy: "name",
+        sortDirection: "desc",
+    },
+}
 
 export function DrivePage() {
     const navigate = useNavigate();
@@ -22,9 +44,8 @@ export function DrivePage() {
     const [sortBy, setSortBy] = useState("createdAt");
     const [sortDirection, setSortDirection] = useState("desc");
     const [items, setItems] = useState([]);
-    const loadMoreData = () => {
-        console.log(loading, hasNext);
-        if (loading || !hasNext) {
+    const loadMoreData = (page = nextPage, isHasNext = hasNext) => {
+        if (loading || !isHasNext) {
             return;
         }
         setLoading(true);
@@ -35,10 +56,14 @@ export function DrivePage() {
         if (parentFolderId) {
             queryParams.parentFolderId = parentFolderId;
         }
-        getItems(nextPage, PAGE_SIZE, queryParams)
+        getItems(page, PAGE_SIZE, queryParams)
             .then(responseItems => {
-                setItems([...items, ...responseItems]);
-                setNextPage(nextPage + 1);
+                if (page === 1) {
+                    setItems(responseItems)
+                } else {
+                    setItems([...items, ...responseItems]);
+                }
+                setNextPage(page + 1);
                 setHasNext(responseItems.length === PAGE_SIZE);
                 setLoading(false);
             })
@@ -53,9 +78,18 @@ export function DrivePage() {
         }
     }, []);
     useEffect(() => {
-        setNextPage(1);
-        loadMoreData();
+        loadMoreData(1, true);
     }, [parentFolderId, sortBy, sortDirection]);
+    const getSort = () => {
+        let sort = Object.entries(sorts)
+            .filter(([_, sort]) => sort.sortBy === sortBy && sort.sortDirection === sortDirection);
+        return sort.length > 0 ? sort[0][0] : "newest"
+    };
+    const setSort = (value) => {
+        const sort = sorts[value];
+        setSortBy(sort.sortBy);
+        setSortDirection(sort.sortDirection);
+    };
     const loadMore =
         !loading && hasNext ? (
             <div
@@ -66,28 +100,64 @@ export function DrivePage() {
                     lineHeight: '32px',
                 }}
             >
-                <Button onClick={loadMoreData}>loading more</Button>
+                <Button onClick={() => loadMoreData()}>Load more</Button>
             </div>
         ) : (
             <Divider>Found items: {items.length}</Divider>
         );
     return (
         <MainLayout>
-            <List
-                itemLayout="horizontal"
-                dataSource={items}
-                loadMore={loadMore}
-                style={{
-                    width: "100%",
-                    margin: "10px 30px"
-                }}
-                renderItem={item =>
-                    item.type === 'FOLDER'
-                        ? <FolderListItem folder={item}
-                                          setFolderToParent={() => setFolderToParent(item, setParentFolder, setSearchParams)}/>
-                        : <FileListItem file={item}/>
-                }
-            />
+            <Flex style={{
+                height: "100%",
+                width: "80%",
+                maxWidth: 1200,
+                margin: "0 auto",
+                justifyContent: "flex-start",
+                flexWrap: "wrap",
+                padding: "0 auto",
+                overflowY: "auto",
+                flexDirection: "column",
+                alignItems: "center"
+            }}>
+                <Flex style={{
+                    width: "90%",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexWrap: "nowrap",
+                }}>
+                    <Flex style={{
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flexWrap: "nowrap",
+                        width: "50%"
+                    }}>
+                        <Select placeholder={"Newest"} value={getSort()} onSelect={value => setSort(value)}
+                                options={Object.entries(sorts).map(([key, value]) => {
+                                    return {label: value.label, value: key}
+                                })}
+                                disabled={loading}
+                                style={{width: "50%", margin: "10px 10px"}}/>
+                        {/*<Search placeholder={"Search name..."} value={name} allowClear={true}
+                            onChange={e => setName(e.target.value)}
+                            style={{width: "50%", margin: "10px 10px"}}/>*/}
+                    </Flex>
+                </Flex>
+                <List
+                    itemLayout="horizontal"
+                    dataSource={items}
+                    loadMore={loadMore}
+                    style={{
+                        width: "90%",
+                        margin: "10px 30px",
+                    }}
+                    renderItem={item =>
+                        item.type === 'FOLDER'
+                            ? <FolderListItem folder={item}
+                                              setFolderToParent={() => setFolderToParent(item, setParentFolder, setSearchParams)}/>
+                            : <FileListItem file={item}/>
+                    }
+                />
+            </Flex>
         </MainLayout>
     )
 }
