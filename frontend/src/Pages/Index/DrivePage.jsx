@@ -33,6 +33,20 @@ const sorts = {
         sortDirection: "desc",
     },
 }
+const types = {
+    "all": {
+        label: "All types",
+        values: ["FOLDER", "FILE"]
+    },
+    "folder": {
+        label: "Folders",
+        values: ["FOLDER"]
+    },
+    "file": {
+        label: "Files",
+        values: ["FILE"]
+    },
+}
 
 export function DrivePage() {
     const navigate = useNavigate();
@@ -43,7 +57,8 @@ export function DrivePage() {
     const [loading, setLoading] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const parentFolderIdParam = searchParams.get("parentFolderId");
-    const [searchName, setSearchName] = useState("")
+    const [searchName, setSearchName] = useState("");
+    const [itemTypes, setItemTypes] = useState(["FOLDER", "FILE"]);
     const [nextPage, setNextPage] = useState(1);
     const [hasNext, setHasNext] = useState(true);
     const [sortBy, setSortBy] = useState("createdAt");
@@ -58,6 +73,7 @@ export function DrivePage() {
         setLoading(true);
         let queryParams = {
             name: searchName,
+            types: itemTypes,
             sortBy: sortBy,
             sortDirection: sortDirection,
         };
@@ -97,7 +113,7 @@ export function DrivePage() {
     }, [parentFolderIdParam]);
     useEffect(() => {
         loadMoreData(1, true);
-    }, [parentFolderIdParam, searchName, sortBy, sortDirection]);
+    }, [parentFolderIdParam, searchName, itemTypes, sortBy, sortDirection]);
     useEffect(() => {
         if (itemAdded) {
             loadMoreData(1, true);
@@ -114,6 +130,16 @@ export function DrivePage() {
         const sort = sorts[value];
         setSortBy(sort.sortBy);
         setSortDirection(sort.sortDirection);
+    };
+
+    const getType = () => {
+        let type = Object.entries(types)
+            .filter(([_, type]) => type.values === itemTypes);
+        return type.length > 0 ? type[0][0] : "all"
+    };
+    const setType = (value) => {
+        const type = types[value];
+        setItemTypes(type.values);
     };
 
     const loadMore =
@@ -162,7 +188,13 @@ export function DrivePage() {
                                 style={{width: "20%", margin: "10px 10px"}}/>
                         <Search placeholder={"Search name..."} value={searchName} allowClear={true}
                                 onChange={e => setSearchName(e.target.value)}
-                                style={{width: "50%", margin: "10px 10px"}}/>
+                                style={{width: "30%", margin: "10px 10px"}}/>
+                        <Select placeholder={"All types"} value={getType()} onSelect={value => setType(value)}
+                                options={Object.entries(types).map(([key, value]) => {
+                                    return {label: value.label, value: key}
+                                })}
+                                disabled={loading}
+                                style={{width: "20%", margin: "10px 10px"}}/>
                     </Flex>
                     <Flex style={{
                         alignItems: "center",
@@ -184,8 +216,8 @@ export function DrivePage() {
                     }}
                     renderItem={item =>
                         item.type === 'FOLDER'
-                            ? <FolderListItem folder={item}
-                                              setFolderToParent={() => setFolderToParent(item, setParentFolder, setSearchParams, setSearchName)}/>
+                            ? <FolderListItem folder={item} setFolderToParent={() =>
+                                setFolderToParent(item, setParentFolder, setSearchParams, setSearchName, setItemTypes)}/>
                             : <FileListItem file={item}/>
                     }
                 />
@@ -194,8 +226,9 @@ export function DrivePage() {
     )
 }
 
-function setFolderToParent(folder, setParentFolder, setSearchParams, setSearchName) {
+function setFolderToParent(folder, setParentFolder, setSearchParams, setSearchName, setItemTypes) {
     setParentFolder(folder);
     setSearchParams({parentFolderId: folder.id});
     setSearchName("");
+    setItemTypes([]);
 }

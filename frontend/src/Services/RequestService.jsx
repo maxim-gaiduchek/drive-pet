@@ -87,7 +87,11 @@ function buildQueryParams(queryParams) {
     }
     const urlParams = new URLSearchParams();
     for (const [key, value] of entries) {
-        urlParams.set(key, value);
+        if (value instanceof Array) {
+            value.map(item => urlParams.append(key, item));
+            continue;
+        }
+        urlParams.append(key, value);
     }
     return "?" + urlParams.toString();
 }

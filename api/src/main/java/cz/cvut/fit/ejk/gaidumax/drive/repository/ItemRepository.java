@@ -49,6 +49,9 @@ public class ItemRepository extends UuidBaseEntityRepository<Item> {
         if (parentFolderId != null) {
             query.setParameter("parentFolderId", parentFolderId.toString());
         }
+        if (CollectionUtils.isNotEmpty(filter.getTypes())) {
+            query.setParameter("types", filter.getTypes());
+        }
         if (StringUtils.isNotEmpty(filter.getName())) {
             query.setParameter("name", "%" + filter.getName() + "%");
         }
