@@ -2,10 +2,13 @@ import {MainLayout} from "../../Components/Layouts/MainLayout";
 import {useEffect, useState} from "react";
 import {getItems} from "../../Services/ItemService";
 import {Button, Divider, Flex, List, Select} from "antd";
-import {FileListItem} from "./Components/FileListItem";
-import {FolderListItem} from "./Components/FolderListItem";
+import {FileListItem} from "./Components/File/FileListItem";
+import {FolderListItem} from "./Components/Folder/FolderListItem";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import Search from "antd/lib/input/Search";
+import {AddFolderButtonModal} from "./Components/Folder/AddFolderButtonModal";
+import {getFolder} from "../../Services/FolderService";
+import {AddFileButtonModal} from "./Components/File/AddFileButtonModal";
 
 const PAGE_SIZE = 20;
 const sorts = {
@@ -39,25 +42,27 @@ export function DrivePage() {
 
     const [loading, setLoading] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
-    const parentFolderId = searchParams.get("parentFolderId");
-    const [name, setName] = useState("")
+    const parentFolderIdParam = searchParams.get("parentFolderId");
+    const [searchName, setSearchName] = useState("")
     const [nextPage, setNextPage] = useState(1);
     const [hasNext, setHasNext] = useState(true);
     const [sortBy, setSortBy] = useState("createdAt");
     const [sortDirection, setSortDirection] = useState("desc");
     const [items, setItems] = useState([]);
+    const [itemAdded, setItemAdded] = useState(false);
+
     const loadMoreData = (page = nextPage, isHasNext = hasNext) => {
         if (loading || !isHasNext) {
             return;
         }
         setLoading(true);
         let queryParams = {
-            name: name,
+            name: searchName,
             sortBy: sortBy,
             sortDirection: sortDirection,
         };
-        if (parentFolderId) {
-            queryParams.parentFolderId = parentFolderId;
+        if (parentFolderIdParam) {
+            queryParams.parentFolderId = parentFolderIdParam;
         }
         getItems(page, PAGE_SIZE, queryParams)
             .then(responseItems => {
@@ -74,6 +79,7 @@ export function DrivePage() {
                 setLoading(false);
             })
     };
+
     useEffect(() => {
         let loginUserId = localStorage.getItem("loginUserId");
         if (loginUserId === null) {
@@ -81,8 +87,24 @@ export function DrivePage() {
         }
     }, []);
     useEffect(() => {
+        if (parentFolderIdParam) {
+            getFolder(parentFolderIdParam)
+                .then(folder => setParentFolder(folder))
+                .catch(() => setParentFolder({}))
+        } else {
+            setParentFolder({})
+        }
+    }, [parentFolderIdParam]);
+    useEffect(() => {
         loadMoreData(1, true);
-    }, [parentFolderId, name, sortBy, sortDirection]);
+    }, [parentFolderIdParam, searchName, sortBy, sortDirection]);
+    useEffect(() => {
+        if (itemAdded) {
+            loadMoreData(1, true);
+            setItemAdded(false);
+        }
+    }, [itemAdded]);
+
     const getSort = () => {
         let sort = Object.entries(sorts)
             .filter(([_, sort]) => sort.sortBy === sortBy && sort.sortDirection === sortDirection);
@@ -93,6 +115,7 @@ export function DrivePage() {
         setSortBy(sort.sortBy);
         setSortDirection(sort.sortDirection);
     };
+
     const loadMore =
         !loading && hasNext ? (
             <div
@@ -108,6 +131,7 @@ export function DrivePage() {
         ) : (
             <Divider>Found items: {items.length}</Divider>
         );
+
     return (
         <MainLayout>
             <Flex style={{
@@ -116,33 +140,38 @@ export function DrivePage() {
                 maxWidth: 1200,
                 margin: "0 auto",
                 justifyContent: "flex-start",
-                flexWrap: "wrap",
                 padding: "0 auto",
                 overflowY: "auto",
                 flexDirection: "column",
-                alignItems: "center"
+                alignItems: "center",
             }}>
                 <Flex style={{
                     width: "90%",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    flexWrap: "nowrap",
                 }}>
                     <Flex style={{
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        flexWrap: "nowrap",
-                        width: "1000%"
+                        width: "70%",
                     }}>
                         <Select placeholder={"Newest"} value={getSort()} onSelect={value => setSort(value)}
                                 options={Object.entries(sorts).map(([key, value]) => {
                                     return {label: value.label, value: key}
                                 })}
                                 disabled={loading}
-                                style={{width: "10%", margin: "10px 10px"}}/>
-                        <Search placeholder={"Search name..."} value={name} allowClear={true}
-                            onChange={e => setName(e.target.value)}
-                            style={{width: "30%", margin: "10px 10px"}}/>
+                                style={{width: "20%", margin: "10px 10px"}}/>
+                        <Search placeholder={"Search name..."} value={searchName} allowClear={true}
+                                onChange={e => setSearchName(e.target.value)}
+                                style={{width: "50%", margin: "10px 10px"}}/>
+                    </Flex>
+                    <Flex style={{
+                        alignItems: "center",
+                        width: "20%",
+                    }}>
+                        <AddFileButtonModal style={{margin: "0 1.3%", width: "48%",}} parentFolder={parentFolder}
+                                            setItemAdded={setItemAdded}/>
+                        <AddFolderButtonModal style={{margin: "0 1.3%", width: "48%",}} parentFolder={parentFolder}
+                                              setItemAdded={setItemAdded}/>
                     </Flex>
                 </Flex>
                 <List
@@ -156,7 +185,7 @@ export function DrivePage() {
                     renderItem={item =>
                         item.type === 'FOLDER'
                             ? <FolderListItem folder={item}
-                                              setFolderToParent={() => setFolderToParent(item, setParentFolder, setSearchParams)}/>
+                                              setFolderToParent={() => setFolderToParent(item, setParentFolder, setSearchParams, setSearchName)}/>
                             : <FileListItem file={item}/>
                     }
                 />
@@ -165,7 +194,8 @@ export function DrivePage() {
     )
 }
 
-function setFolderToParent(folder, setParentFolder, setSearchParams) {
+function setFolderToParent(folder, setParentFolder, setSearchParams, setSearchName) {
     setParentFolder(folder);
     setSearchParams({parentFolderId: folder.id});
+    setSearchName("");
 }

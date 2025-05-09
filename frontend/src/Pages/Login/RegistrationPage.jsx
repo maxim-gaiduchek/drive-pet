@@ -4,7 +4,6 @@ import {Input} from "antd";
 import {MainLayout} from "../../Components/Layouts/MainLayout";
 import {CenteredLayout} from "../../Components/Layouts/CenteredLayout";
 import {login} from "../../Services/AuthService";
-import {createCustomer} from "../../Services/CustomerService";
 import {SubmitButton} from "../../Components/Form/Buttons/SubmitButton";
 import {registerUser} from "../../Services/UserService";
 
