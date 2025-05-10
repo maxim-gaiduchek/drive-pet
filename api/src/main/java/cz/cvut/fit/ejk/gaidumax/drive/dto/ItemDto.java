@@ -1,5 +1,6 @@
 package cz.cvut.fit.ejk.gaidumax.drive.dto;
 
+import cz.cvut.fit.ejk.gaidumax.drive.entity.ItemType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +17,10 @@ import java.util.UUID;
 public class ItemDto {
 
     private UUID id;
+    private ItemType type;
     private String name;
-    private String type;
+    private String fileType;
+    private String path;
     private Long size;
     private UserDto author;
     private FolderDto parentFolder;

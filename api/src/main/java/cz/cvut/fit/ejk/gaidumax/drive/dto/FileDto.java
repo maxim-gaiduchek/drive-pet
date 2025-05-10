@@ -24,6 +24,7 @@ public class FileDto {
     private String filePath;
     @Valid
     private UuidBaseInfoDto parentFolder;
+    private UserDto author;
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
 }

@@ -29,6 +29,10 @@ public class Item extends UuidBaseEntity {
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ItemType type;
+    @Column(name = "file_type", nullable = false)
+    private String fileType;
+    @Column(name = "path", nullable = false)
+    private String path;
     @Column(name = "size", nullable = false)
     private Long size;
     @ManyToOne

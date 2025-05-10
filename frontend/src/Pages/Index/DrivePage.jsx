@@ -32,6 +32,16 @@ const sorts = {
         sortBy: "name",
         sortDirection: "desc",
     },
+    "size asc": {
+        label: "Size (B -> PB)",
+        sortBy: "size",
+        sortDirection: "asc",
+    },
+    "size desc": {
+        label: "Size (PB -> P)",
+        sortBy: "size",
+        sortDirection: "desc",
+    },
 }
 const types = {
     "all": {

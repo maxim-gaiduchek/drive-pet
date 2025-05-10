@@ -31,7 +31,6 @@ public class FileController {
     @Inject
     AuthService authService;
 
-    @Deprecated(forRemoval = true)
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
