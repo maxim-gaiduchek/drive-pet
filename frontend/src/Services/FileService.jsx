@@ -1,4 +1,4 @@
-import {getRequest, postRequestFormData} from "./RequestService";
+import {deleteRequest, getRequest, postRequestFormData} from "./RequestService";
 import {apiUrl} from "../config";
 
 export async function getFile(id) {
@@ -16,4 +16,8 @@ export async function createFile(file, parentFolder) {
     formData.append("dto", new Blob([JSON.stringify(body)], {type: "application/json"}));
     formData.append("file", file);
     return postRequestFormData(apiUrl + "/files", formData);
+}
+
+export async function deleteFile(id) {
+    return deleteRequest(apiUrl + "/files/" + id, false)
 }

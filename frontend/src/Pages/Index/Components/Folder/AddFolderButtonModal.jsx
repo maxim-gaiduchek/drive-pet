@@ -3,7 +3,7 @@ import {Button, Input, Modal} from "antd";
 import {useEffect, useState} from "react";
 import {createFolder} from "../../../../Services/FolderService";
 
-export function AddFolderButtonModal({style, parentFolder, setItemAdded}) {
+export function AddFolderButtonModal({style, parentFolder, setItemsUpdated}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [folderName, setFolderName] = useState("");
@@ -34,7 +34,7 @@ export function AddFolderButtonModal({style, parentFolder, setItemAdded}) {
                 setSaveFolder(false);
                 setLoading(false);
                 setFolderName("");
-                setItemAdded(true);
+                setItemsUpdated(true);
             })
             .catch(() => {
                 setSaveFolder(false);

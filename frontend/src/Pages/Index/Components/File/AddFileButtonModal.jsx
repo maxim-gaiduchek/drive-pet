@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import Dragger from "antd/es/upload/Dragger";
 import {createFile} from "../../../../Services/FileService";
 
-export function AddFileButtonModal({style, parentFolder, setItemAdded}) {
+export function AddFileButtonModal({style, parentFolder, setItemsUpdated}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState(undefined);
@@ -57,7 +57,7 @@ export function AddFileButtonModal({style, parentFolder, setItemAdded}) {
                 setFile(undefined);
                 setFileUploaded(false);
                 setFileList([]);
-                setItemAdded(true);
+                setItemsUpdated(true);
             })
             .catch(() => {
                 setSaveFile(false);

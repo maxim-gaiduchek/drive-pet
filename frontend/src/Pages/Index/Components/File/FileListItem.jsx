@@ -1,10 +1,11 @@
-import {CloudDownloadOutlined, FileOutlined} from "@ant-design/icons";
-import {Button, Flex, Image, List, Modal, Skeleton} from "antd";
+import {CloudDownloadOutlined, DeleteOutlined, FileOutlined} from "@ant-design/icons";
+import {Button, Flex, Image, List, Modal, Popconfirm, Skeleton} from "antd";
 import {useState} from "react";
 import {Link} from "react-router-dom";
 import ReactPlayer from 'react-player'
+import {deleteFile} from "../../../../Services/FileService";
 
-export function FileListItem({file}) {
+export function FileListItem({file, setItemsUpdated}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -16,6 +17,13 @@ export function FileListItem({file}) {
     const handleCancel = () => {
         setIsModalOpen(false);
     };
+    const handleDelete = (e) => {
+        e.stopPropagation();
+        return deleteFile(file.id)
+            .then(() => {
+                setItemsUpdated(true);
+            });
+    }
 
     let fileType = file.fileType.split("/")[0];
     let modalTitle;
@@ -35,10 +43,11 @@ export function FileListItem({file}) {
     } else {
         modalTitle = `File ${file.name}`;
         modalContent = (
-            <Flex style={{ flexDirection: "column", alignItems: "center" }}>
+            <Flex style={{flexDirection: "column", alignItems: "center"}}>
                 <FileOutlined style={{fontSize: "150px"}}/>
-                <p style={{ fontSize: 16 }}>Size: {formatBytes(file.size)}</p>
-                <p style={{ fontSize: 14 }}>Created by: {file.author.firstName} {file.author.lastName} ({file.author.email})</p>
+                <p style={{fontSize: 16}}>Size: {formatBytes(file.size)}</p>
+                <p style={{fontSize: 14}}>Created
+                    by: {file.author.firstName} {file.author.lastName} ({file.author.email})</p>
             </Flex>
         );
     }
@@ -48,8 +57,18 @@ export function FileListItem({file}) {
             <List.Item
                 onClick={showModal}
                 actions={[
-                    <a key="list-loadmore-edit">edit</a>,
-                    <a key="list-loadmore-more">more</a>
+                    <Popconfirm
+                        title={"Delete file " + file.name}
+                        description={"Are you sure to delete this file?"}
+                        onConfirm={handleDelete}
+                        onCancel={e => e.stopPropagation()}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <DeleteOutlined onClick={e => e.stopPropagation()} style={{
+                            color: "#ff4d4f"
+                        }}/>
+                    </Popconfirm>
                 ]}
             >
                 <Skeleton avatar title={false} loading={false} active>
@@ -74,8 +93,7 @@ export function FileListItem({file}) {
                         <OkBtn/>
                     </>
                 )}
-            style={{
-            }}>
+                style={{}}>
                 <Flex style={{
                     maxWidth: "1000px",
                     minHeight: "300px",

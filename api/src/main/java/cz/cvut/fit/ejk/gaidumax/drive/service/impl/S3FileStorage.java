@@ -9,6 +9,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.BucketAlreadyExistsException;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
@@ -46,5 +47,15 @@ public class S3FileStorage implements FileStorage {
         var body = RequestBody.fromInputStream(in, in.available());
         client.putObject(request, body);
         return FULL_PATH_TEMPLATE.formatted(s3Host, BUCKET_NAME, path);
+    }
+
+    @Override
+    public void delete(String filePath) {
+        var path = filePath.substring(s3Host.length() + BUCKET_NAME.length() + 2);
+        var request = DeleteObjectRequest.builder()
+                .bucket(BUCKET_NAME)
+                .key(path)
+                .build();
+        client.deleteObject(request);
     }
 }

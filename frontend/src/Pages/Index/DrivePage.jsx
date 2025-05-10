@@ -75,7 +75,7 @@ export function DrivePage() {
     const [sortBy, setSortBy] = useState("createdAt");
     const [sortDirection, setSortDirection] = useState("desc");
     const [items, setItems] = useState([]);
-    const [itemAdded, setItemAdded] = useState(false);
+    const [itemsUpdated, setItemsUpdated] = useState(false);
 
     const loadMoreData = (page = nextPage, isHasNext = hasNext) => {
         if (loading || !isHasNext) {
@@ -126,11 +126,11 @@ export function DrivePage() {
         loadMoreData(1, true);
     }, [parentFolderIdParam, searchName, itemTypes, sortBy, sortDirection]);
     useEffect(() => {
-        if (itemAdded) {
+        if (itemsUpdated) {
             loadMoreData(1, true);
-            setItemAdded(false);
+            setItemsUpdated(false);
         }
-    }, [itemAdded]);
+    }, [itemsUpdated]);
 
     const getSort = () => {
         let sort = Object.entries(sorts)
@@ -212,9 +212,9 @@ export function DrivePage() {
                         width: "20%",
                     }}>
                         <AddFileButtonModal style={{margin: "0 1.3%", width: "48%",}} parentFolder={parentFolder}
-                                            setItemAdded={setItemAdded}/>
+                                            setItemsUpdated={setItemsUpdated}/>
                         <AddFolderButtonModal style={{margin: "0 1.3%", width: "48%",}} parentFolder={parentFolder}
-                                              setItemAdded={setItemAdded}/>
+                                              setItemsUpdated={setItemsUpdated}/>
                     </Flex>
                 </Flex>
                 <Flex style={{
@@ -233,9 +233,9 @@ export function DrivePage() {
                     }}
                     renderItem={item =>
                         item.type === 'FOLDER'
-                            ? <FolderListItem folder={item} setFolderToParent={() =>
+                            ? <FolderListItem folder={item} setItemsUpdated={setItemsUpdated} setFolderToParent={() =>
                                 setFolderToParent(item, setParentFolder, setSearchParams, setSearchName, setItemTypes)}/>
-                            : <FileListItem file={item}/>
+                            : <FileListItem file={item} setItemsUpdated={setItemsUpdated}/>
                     }
                 />
             </Flex>

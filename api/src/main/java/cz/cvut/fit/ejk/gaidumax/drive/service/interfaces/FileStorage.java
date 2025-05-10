@@ -6,4 +6,6 @@ import java.io.InputStream;
 public interface FileStorage {
 
     String upload(InputStream in, Long userId, String filePath) throws IOException;
+
+    void delete(String filePath);
 }

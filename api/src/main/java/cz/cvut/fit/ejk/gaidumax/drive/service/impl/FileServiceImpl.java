@@ -117,6 +117,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public void delete(UUID id) {
         var file = getByIdOrThrow(id);
+        storage.delete(file.getS3FilePath());
         fileRepository.delete(file);
     }
 }

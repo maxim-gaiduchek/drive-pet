@@ -1,4 +1,4 @@
-import {getRequest, postRequest} from "./RequestService";
+import {getRequest, postRequest, putRequest} from "./RequestService";
 import {apiUrl} from "../config";
 
 export async function getFolder(id) {
@@ -19,4 +19,17 @@ export async function createFolder(name, parentFolder) {
         };
     }
     return postRequest(apiUrl + "/folders", body);
+}
+
+export async function updateFolder(id, name, parentFolder) {
+    let body = {
+        name: name,
+    }
+    if (parentFolder && parentFolder.id) {
+        body.parentFolder = {
+            id: parentFolder.id
+        };
+    }
+    console.log(body);
+    return putRequest(apiUrl + "/folders/" + id, body);
 }

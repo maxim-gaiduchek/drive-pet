@@ -48,7 +48,8 @@ public class Repository<E, T> {
 
     @Transactional
     void deleteTransactional(E entity) {
-        entityManager.remove(entity);
+        E entityToDelete = entityManager.merge(entity);
+        entityManager.remove(entityToDelete);
     }
 
     TypedQuery<E> createQuery(String sql) {
