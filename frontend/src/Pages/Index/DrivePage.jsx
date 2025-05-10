@@ -9,6 +9,7 @@ import Search from "antd/lib/input/Search";
 import {AddFolderButtonModal} from "./Components/Folder/AddFolderButtonModal";
 import {getFolder} from "../../Services/FolderService";
 import {AddFileButtonModal} from "./Components/File/AddFileButtonModal";
+import {FolderPath} from "./Components/Folder/FolderPath";
 
 const PAGE_SIZE = 20;
 const sorts = {
@@ -215,6 +216,12 @@ export function DrivePage() {
                         <AddFolderButtonModal style={{margin: "0 1.3%", width: "48%",}} parentFolder={parentFolder}
                                               setItemAdded={setItemAdded}/>
                     </Flex>
+                </Flex>
+                <Flex style={{
+                    width: "90%",
+                    flexDirection: "row",
+                }}>
+                    <FolderPath folder={parentFolder}/>
                 </Flex>
                 <List
                     itemLayout="horizontal"

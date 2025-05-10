@@ -16,7 +16,6 @@ export function FolderListItem({folder, setFolderToParent}) {
                     title={<a>{folder.name}</a>}
                     description={`By: ${folder.author.firstName} ${folder.author.lastName} (${folder.author.email})`}
                 />
-                <div>content</div>
             </Skeleton>
         </List.Item>
     )

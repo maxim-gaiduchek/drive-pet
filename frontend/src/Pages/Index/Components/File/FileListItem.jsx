@@ -6,18 +6,14 @@ import ReactPlayer from 'react-player'
 
 export function FileListItem({file}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [muted, setMuted] = useState(false);
 
     const showModal = () => {
-        setMuted(false);
         setIsModalOpen(true);
     };
     const handleOk = () => {
-        setMuted(false);
         setIsModalOpen(false);
     };
     const handleCancel = () => {
-        setMuted(false);
         setIsModalOpen(false);
     };
 
@@ -34,7 +30,7 @@ export function FileListItem({file}) {
     } else if (fileType === "video") {
         modalTitle = `Video ${file.name}`;
         modalContent = (
-            <ReactPlayer url={file.path} controls={true} muted={muted} width={"1200px"} height={"500px"}/>
+            <ReactPlayer url={file.path} controls={true} width={"1200px"} height={"500px"}/>
         );
     } else {
         modalTitle = `File ${file.name}`;
@@ -62,7 +58,6 @@ export function FileListItem({file}) {
                         title={<a>{file.name}</a>}
                         description={`Size: ${formatBytes(file.size)}, By: ${file.author.firstName} ${file.author.lastName} (${file.author.email})`}
                     />
-                    <div>content</div>
                 </Skeleton>
             </List.Item>
             <Modal

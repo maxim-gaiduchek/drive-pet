@@ -5,6 +5,10 @@ export async function getFolder(id) {
     return getRequest(apiUrl + "/folders/" + id)
 }
 
+export async function getAllParentFolders(id) {
+    return getRequest(apiUrl + "/folders/" + id + "/parents")
+}
+
 export async function createFolder(name, parentFolder) {
     let body = {
         name: name,

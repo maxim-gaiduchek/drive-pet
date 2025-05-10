@@ -30,7 +30,6 @@ public class FolderController {
     @Inject
     AuthService authService;
 
-    @Deprecated(forRemoval = true)
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

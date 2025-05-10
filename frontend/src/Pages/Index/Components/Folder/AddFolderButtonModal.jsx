@@ -62,7 +62,7 @@ export function AddFolderButtonModal({style, parentFolder, setItemAdded}) {
                         </Button>
                     </>
                 )}>
-                <Input placeholder="Enter folder name" value={folderName}
+                <Input placeholder="Enter folder name" value={folderName} count={{ max: 30 }}
                        onChange={e => setFolderName(e.target.value)} disabled={loading}
                        status={folderName.length === 0 ? "error" : ""}/>
             </Modal>
