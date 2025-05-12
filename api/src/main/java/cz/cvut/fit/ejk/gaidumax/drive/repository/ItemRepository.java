@@ -34,13 +34,13 @@ public class ItemRepository extends UuidBaseEntityRepository<Item> {
                                                          from folder fol
                                                                   join file_folder_ancestors ffa on fol.id = ffa.folder_id
                                                          where fol.folder_id is not null)
-                select i.*
+                select *
                 from (select f.id           as id,
                              f.file_name    as name,
                              'FILE'         as type,
                              f.size         as size,
                              f.folder_id    as folder_id,
-                             fa.user_id     as owner_id,
+                             ofa.user_id     as owner_id,
                              f.created_at   as created_at,
                              f.updated_at   as updated_at,
                              f.s3_file_path as path,
@@ -48,8 +48,9 @@ public class ItemRepository extends UuidBaseEntityRepository<Item> {
                              fa.access_type as user_access_type
                       from file f
                                join user_to_file_access fa on fa.file_id = f.id
+                               join user_to_file_access ofa on ofa.file_id = f.id
                       where fa.user_id = :userId
-                        and fa.access_type = 'OWNER'
+                        and ofa.access_type = 'OWNER'
                 
                       union
                 
@@ -84,7 +85,7 @@ public class ItemRepository extends UuidBaseEntityRepository<Item> {
                              fa.access_type as user_access_type
                       from folder fol
                                join user_to_folder_access fa on fa.folder_id = fol.id
-                               join user_to_folder_access ofa on fa.folder_id = fol.id
+                               join user_to_folder_access ofa on ofa.folder_id = fol.id
                       where fol.id in (select folder_id from file_folder_ancestors)
                         and ofa.access_type = 'OWNER') i
                 where 1=1
