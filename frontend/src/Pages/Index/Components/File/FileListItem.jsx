@@ -1,4 +1,4 @@
-import {CloudDownloadOutlined, DeleteOutlined, FileOutlined} from "@ant-design/icons";
+import {CloudDownloadOutlined, DeleteOutlined, EditOutlined, FileOutlined} from "@ant-design/icons";
 import {Button, Flex, Image, List, Modal, Popconfirm, Skeleton} from "antd";
 import {useState} from "react";
 import {Link} from "react-router-dom";
@@ -51,25 +51,29 @@ export function FileListItem({file, setItemsUpdated}) {
             </Flex>
         );
     }
+    let actions = [];
+    if (file.userAccessType === 'OWNER') {
+        actions.push(
+            <Popconfirm
+                title={"Delete file " + file.name}
+                description={"Are you sure to delete this file?"}
+                onConfirm={handleDelete}
+                onCancel={e => e.stopPropagation()}
+                okText="Yes"
+                cancelText="No"
+            >
+                <DeleteOutlined onClick={e => e.stopPropagation()} style={{
+                    color: "#ff4d4f"
+                }}/>
+            </Popconfirm>
+        )
+    }
 
     return (
         <>
             <List.Item
                 onClick={showModal}
-                actions={[
-                    <Popconfirm
-                        title={"Delete file " + file.name}
-                        description={"Are you sure to delete this file?"}
-                        onConfirm={handleDelete}
-                        onCancel={e => e.stopPropagation()}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <DeleteOutlined onClick={e => e.stopPropagation()} style={{
-                            color: "#ff4d4f"
-                        }}/>
-                    </Popconfirm>
-                ]}
+                actions={actions}
             >
                 <Skeleton avatar title={false} loading={false} active>
                     <List.Item.Meta
@@ -92,8 +96,7 @@ export function FileListItem({file, setItemsUpdated}) {
                         </Link>
                         <OkBtn/>
                     </>
-                )}
-                style={{}}>
+                )}>
                 <Flex style={{
                     maxWidth: "1000px",
                     minHeight: "300px",
