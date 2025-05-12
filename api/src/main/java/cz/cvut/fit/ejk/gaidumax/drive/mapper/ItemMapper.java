@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper(config = MapperConfiguration.class)
 public interface ItemMapper {
 
-    ItemDto toDtos(Item item);
+    ItemDto toDto(Item item);
     
     List<ItemDto> toDtos(List<Item> items);
 

@@ -5,6 +5,8 @@ import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UuidBaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.UserAccessType;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.UserFileAccess;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.AbstractException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.FileException;
@@ -72,7 +74,7 @@ public class FileServiceImpl implements FileService {
             var fis = new FileInputStream(fileUpload.uploadedFile().toFile());
             var storageFilePath = storage.upload(fis, userId, filePath);
             savedFile.setS3FilePath(storageFilePath);
-            enrichWithAuthor(savedFile);
+            enrichWithOwner(savedFile);
             enrichWithParentFolder(savedFile, fileDto.getParentFolder());
             return fileRepository.save(savedFile);
         } catch (AbstractException e) {
@@ -88,10 +90,15 @@ public class FileServiceImpl implements FileService {
         return FILE_PATH_TEMPLATE.formatted(fileId, millis, fileName);
     }
 
-    private void enrichWithAuthor(File file) {
+    private void enrichWithOwner(File file) {
         var userId = securityContextProvider.getUserId();
-        var author = userService.getByIdOrThrow(userId);
-        file.setAuthor(author);
+        var owner = userService.getByIdOrThrow(userId);
+        var access = UserFileAccess.builder()
+                .user(owner)
+                .file(file)
+                .accessType(UserAccessType.OWNER)
+                .build();
+        file.getAccesses().add(access);
     }
 
     private void enrichWithParentFolder(File file, UuidBaseInfoDto parentFolderDto) {

@@ -3,6 +3,8 @@ package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FolderDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UuidBaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.UserAccessType;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.UserFolderAccess;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.ValidationException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.code.FolderExceptionCode;
@@ -51,15 +53,20 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public Folder create(FolderDto folderDto) {
         var folder = folderMapper.toEntity(folderDto);
-        enrichWithAuthor(folder);
+        enrichWithOwner(folder);
         enrichWithParentFolder(folder, folderDto);
         return folderRepository.save(folder);
     }
 
-    private void enrichWithAuthor(Folder folder) {
+    private void enrichWithOwner(Folder folder) {
         var userId = securityContextProvider.getUserId();
-        var author = userService.getByIdOrThrow(userId);
-        folder.setAuthor(author);
+        var owner = userService.getByIdOrThrow(userId);
+        var access = UserFolderAccess.builder()
+                .user(owner)
+                .folder(folder)
+                .accessType(UserAccessType.OWNER)
+                .build();
+        folder.getAccesses().add(access);
     }
 
     private void enrichWithParentFolder(Folder folder, FolderDto folderDto) {

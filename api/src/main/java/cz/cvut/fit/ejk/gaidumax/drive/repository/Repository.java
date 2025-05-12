@@ -5,6 +5,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.repository.data.Sort;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 public class Repository<E, T> {
 
     private static final String ORDER_BY_QUERY_TEMPLATE = "order by %s";
-    private static final String OFFSET_LIMIT_QUERY_TEMPLATE = "offset %d limit %d";
+    private static final String OFFSET_LIMIT_QUERY_TEMPLATE = "offset %d first %d rows only";
 
     @Inject
     EntityManager entityManager;
@@ -69,9 +70,27 @@ public class Repository<E, T> {
 
     TypedQuery<E> createQuery(String sql, Sort sort, PageRequest pageRequest) {
         var sqlWithSort = appendSortToQuery(sql, sort);
-        return createQuery(sqlWithSort)
+        return createQuery(sqlWithSort);
+    }
+
+    Query createNativeQuery(String sql) {
+        return entityManager.createNativeQuery(sql, entityClass);
+    }
+
+    Query createNativeQuery(String sql, Sort sort) {
+        var sqlWithSort = appendSortToQuery(sql, sort);
+        return createNativeQuery(sqlWithSort);
+    }
+
+    Query createNativeQuery(String sql, PageRequest pageRequest) {
+        return createNativeQuery(sql)
                 .setFirstResult(pageRequest.getOffset())
                 .setMaxResults(pageRequest.getPageSize());
+    }
+
+    Query createNativeQuery(String sql, Sort sort, PageRequest pageRequest) {
+        var sqlWithSort = appendSortToQuery(sql, sort);
+        return createNativeQuery(sqlWithSort, pageRequest);
     }
 
     private String appendSortToQuery(String sql, Sort sort) {

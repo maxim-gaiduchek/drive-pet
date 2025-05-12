@@ -36,9 +36,12 @@ public class Item extends UuidBaseEntity {
     @Column(name = "size", nullable = false)
     private Long size;
     @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author;
+    @JoinColumn(name = "owner_id")
+    private User owner;
     @ManyToOne
     @JoinColumn(name = "folder_id")
     private Folder parentFolder;
+    @Column(name = "user_access_type")
+    @Enumerated(EnumType.STRING)
+    private UserAccessType userAccessType;
 }

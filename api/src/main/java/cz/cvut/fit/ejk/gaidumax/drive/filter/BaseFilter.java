@@ -13,16 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @SuperBuilder(builderMethodName = "baseBuilder")
-public class UuidBaseFilter {
+public class BaseFilter<ID> {
 
-    protected List<UUID> ids;
+    protected List<ID> ids;
     @Builder.Default
     protected Integer page = 1;
     @Builder.Default
@@ -31,12 +30,12 @@ public class UuidBaseFilter {
     protected String sortDirection;
 
     protected final Map<String, List<String>> sortVariants = new HashMap<>();
-    protected static final String DEFAULT_SORT_BY = "createdAt";
+    protected static final String DEFAULT_SORT_BY = "created_at";
     protected static final Sort.Direction DEFAULT_SORT_DIRECTION = Sort.Direction.DESC;
 
     {
         sortVariants.put("id", List.of("id"));
-        sortVariants.put("createdAt", List.of("createdAt"));
+        sortVariants.put("createdAt", List.of("created_at"));
     }
 
     public PageRequest buildPageable() {

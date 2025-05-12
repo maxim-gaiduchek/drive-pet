@@ -47,7 +47,7 @@ export function FileListItem({file, setItemsUpdated}) {
                 <FileOutlined style={{fontSize: "150px"}}/>
                 <p style={{fontSize: 16}}>Size: {formatBytes(file.size)}</p>
                 <p style={{fontSize: 14}}>Created
-                    by: {file.author.firstName} {file.author.lastName} ({file.author.email})</p>
+                    by: {file.owner.firstName} {file.owner.lastName} ({file.owner.email})</p>
             </Flex>
         );
     }
@@ -75,7 +75,7 @@ export function FileListItem({file, setItemsUpdated}) {
                     <List.Item.Meta
                         avatar={<FileOutlined/>}
                         title={<a>{file.name}</a>}
-                        description={`Size: ${formatBytes(file.size)}, By: ${file.author.firstName} ${file.author.lastName} (${file.author.email})`}
+                        description={`Size: ${formatBytes(file.size)}, By: ${file.owner.firstName} ${file.owner.lastName} (${file.owner.email})`}
                     />
                 </Skeleton>
             </List.Item>

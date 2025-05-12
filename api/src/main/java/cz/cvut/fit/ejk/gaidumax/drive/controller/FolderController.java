@@ -34,7 +34,7 @@ public class FolderController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public FolderDto get(@PathParam("id") UUID id) {
-        authService.checkUserHasAccessToFolder(id);
+        authService.checkUserHasReadAccessToFolder(id);
         var folder = folderService.getByIdOrThrow(id);
         return folderMapper.toDto(folder);
     }
@@ -44,7 +44,6 @@ public class FolderController {
     @Produces(MediaType.APPLICATION_JSON)
     @Authenticated
     public List<FolderDto> getAllParentFolder(@PathParam("id") UUID id) {
-        authService.checkUserHasAccessToFolder(id);
         var folders = folderService.getAllParentFolders(id);
         return folderMapper.toDtos(folders);
     }
@@ -64,7 +63,7 @@ public class FolderController {
     @Produces(MediaType.APPLICATION_JSON)
     @Authenticated
     public FolderDto update(@PathParam("id") UUID id, @Valid FolderDto folderDto) {
-        authService.checkUserHasAccessToFolder(id);
+        authService.checkUserHasWriteAccessToFolder(id);
         var folder = folderService.update(id, folderDto);
         return folderMapper.toDto(folder);
     }
@@ -72,8 +71,8 @@ public class FolderController {
     @DELETE
     @Path("/{id}")
     @Authenticated
-    public void update(@PathParam("id") UUID id) {
-        authService.checkUserHasAccessToFolder(id);
+    public void delete(@PathParam("id") UUID id) {
+        authService.checkUserIsOwnerOfFolder(id);
         folderService.delete(id);
     }
 }

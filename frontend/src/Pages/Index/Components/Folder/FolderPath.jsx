@@ -28,24 +28,24 @@ export function FolderPath({style, folder}) {
     }
     let parentFoldersDropdown = [
         {
-            key: null,
+            key: "main-folder",
             label: (
                 <Link to={"/drive"}>
                     My Drive
                 </Link>
             ),
-            icon: <HomeOutlined />,
+            icon: <HomeOutlined/>,
         }
     ];
     parentFoldersDropdown.push(...parentFolders.map(parentFolder => {
         return {
-            key: parentFolder.id,
+            key: "folder-" + parentFolder.id,
             label: (
                 <Link to={"/drive?parentFolderId=" + parentFolder.id}>
                     {parentFolder.name}
                 </Link>
             ),
-            icon: <FolderOutlined />,
+            icon: <FolderOutlined/>,
         }
     }));
 
@@ -74,7 +74,7 @@ export function FolderPath({style, folder}) {
                 parentFolders.length > 3
                     ? <>
                         <MinusOutlined rotate={-75}/>
-                        <Dropdown menu={{ items: parentFoldersDropdown }}>
+                        <Dropdown menu={{items: parentFoldersDropdown}}>
                             ...
                         </Dropdown>
                     </>
