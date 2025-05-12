@@ -1,4 +1,4 @@
-import {CloudDownloadOutlined, DeleteOutlined, EditOutlined, FileOutlined} from "@ant-design/icons";
+import {CloudDownloadOutlined, DeleteOutlined, FileOutlined} from "@ant-design/icons";
 import {Button, Flex, Image, List, Modal, Popconfirm, Skeleton} from "antd";
 import {useState} from "react";
 import {Link} from "react-router-dom";

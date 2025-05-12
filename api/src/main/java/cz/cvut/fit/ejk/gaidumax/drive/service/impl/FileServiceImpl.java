@@ -2,12 +2,15 @@ package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FileForm;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
+import cz.cvut.fit.ejk.gaidumax.drive.dto.UserAccessDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UuidBaseInfoDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.UserAccessType;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.UserFileAccess;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.AbstractException;
+import cz.cvut.fit.ejk.gaidumax.drive.exception.AccessException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.FileException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.code.FileExceptionCode;
@@ -17,6 +20,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileStorage;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FolderService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.UserService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContextProvider;
+import cz.cvut.fit.ejk.gaidumax.drive.utils.FileUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -24,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileInputStream;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -93,12 +98,16 @@ public class FileServiceImpl implements FileService {
     private void enrichWithOwner(File file) {
         var userId = securityContextProvider.getUserId();
         var owner = userService.getByIdOrThrow(userId);
-        var access = UserFileAccess.builder()
-                .user(owner)
-                .file(file)
-                .accessType(UserAccessType.OWNER)
-                .build();
+        var access = buildUserAccess(file, owner, UserAccessType.OWNER);
         file.getAccesses().add(access);
+    }
+
+    private UserFileAccess buildUserAccess(File file, User user, UserAccessType accessType) {
+        return UserFileAccess.builder()
+                .user(user)
+                .file(file)
+                .accessType(accessType)
+                .build();
     }
 
     private void enrichWithParentFolder(File file, UuidBaseInfoDto parentFolderDto) {
@@ -126,5 +135,49 @@ public class FileServiceImpl implements FileService {
         var file = getByIdOrThrow(id);
         storage.delete(file.getS3FilePath());
         fileRepository.delete(file);
+    }
+
+    // TODO create folder accesses
+    @Override
+    public UserFileAccess createAccess(UUID fileId, Long userId, UserAccessDto userAccessDto) {
+        var file = getByIdOrThrow(fileId);
+        var existedAccess = FileUtils.fetchAccess(file, userId);
+        if (existedAccess != null) {
+            return existedAccess;
+        }
+        var user = userService.getByIdOrThrow(userId);
+        var access = buildUserAccess(file, user, userAccessDto.getAccessType());
+        file.getAccesses().add(access);
+        var savedFile = fileRepository.save(file);
+        return FileUtils.fetchAccess(savedFile, user.getId());
+    }
+
+    @Override
+    public UserFileAccess updateAccess(UUID fileId, Long userId, UserAccessDto userAccessDto) {
+        var file = getByIdOrThrow(fileId);
+        var access = FileUtils.fetchAccess(file, userId);
+        checkAccessUpdatePossibility(access, file, userId, userAccessDto);
+        access.setAccessType(userAccessDto.getAccessType());
+        var savedFile = fileRepository.save(file);
+        return FileUtils.fetchAccess(savedFile, userId);
+    }
+
+    private void checkAccessUpdatePossibility(UserFileAccess access, File file, Long userId,
+                                              UserAccessDto userAccessDto) {
+        if (access == null) {
+            throw new AccessException(FileExceptionCode.USER_HAS_NO_ACCESS_TO_FILE, userId, file.getId());
+        }
+        if (UserAccessType.OWNER.equals(userAccessDto.getAccessType())) {
+            throw new AccessException(FileExceptionCode.ONLY_ONE_USER_CAN_BE_OWNER);
+        }
+    }
+
+    // TODO delete folder accesses
+    @Override
+    public void deleteAccess(UUID fileId, Long userId) {
+        var file = getByIdOrThrow(fileId);
+        file.getAccesses()
+                .removeIf(access -> Objects.equals(access.getUser().getId(), userId));
+        fileRepository.save(file);
     }
 }

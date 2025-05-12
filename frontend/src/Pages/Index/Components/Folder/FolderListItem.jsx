@@ -1,6 +1,6 @@
 import {EditOutlined, FolderOutlined} from "@ant-design/icons";
 import {Button, Input, List, Modal, Skeleton} from "antd";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {updateFolder} from "../../../../Services/FolderService";
 
 export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
