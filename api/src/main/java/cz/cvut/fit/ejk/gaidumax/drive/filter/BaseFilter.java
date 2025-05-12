@@ -30,12 +30,12 @@ public class BaseFilter<ID> {
     protected String sortDirection;
 
     protected final Map<String, List<String>> sortVariants = new HashMap<>();
-    protected static final String DEFAULT_SORT_BY = "created_at";
+    protected static final String DEFAULT_SORT_BY = "createdAt";
     protected static final Sort.Direction DEFAULT_SORT_DIRECTION = Sort.Direction.DESC;
 
     {
         sortVariants.put("id", List.of("id"));
-        sortVariants.put("createdAt", List.of("created_at"));
+        sortVariants.put("createdAt", List.of("createdAt"));
     }
 
     public PageRequest buildPageable() {

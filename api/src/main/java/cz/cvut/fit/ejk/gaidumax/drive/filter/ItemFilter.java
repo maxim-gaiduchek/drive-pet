@@ -23,6 +23,6 @@ public class ItemFilter extends BaseFilter<UUID> {
 
     {
         sortVariants.put("name", List.of("name"));
-        sortVariants.put("size", List.of("size", "name"));
+        sortVariants.put("size", List.of("size", "name", "createdAt"));
     }
 }
