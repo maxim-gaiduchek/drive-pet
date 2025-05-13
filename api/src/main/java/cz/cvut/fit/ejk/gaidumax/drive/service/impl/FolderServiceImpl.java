@@ -3,6 +3,7 @@ package cz.cvut.fit.ejk.gaidumax.drive.service.impl;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.FolderDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UserAccessDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UuidBaseInfoDto;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.BaseEntity;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.UserAccessType;
@@ -20,6 +21,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.utils.FolderUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -109,6 +111,15 @@ public class FolderServiceImpl implements FolderService {
     public void delete(UUID id) {
         var folder = getByIdOrThrow(id);
         folderRepository.delete(folder);
+    }
+
+    @Override
+    public List<UserFolderAccess> getAllAccessesByFolderId(UUID id) {
+        var folder = getByIdOrThrow(id);
+        var accesses = folder.getAccesses();
+        accesses.sort(Comparator.comparing(UserFolderAccess::getAccessType)
+                .thenComparing(BaseEntity::getCreatedAt));
+        return accesses;
     }
 
     @Override

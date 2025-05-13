@@ -32,8 +32,8 @@ public class UserFileAccessController {
     @Authenticated
     public List<UserAccessDto> getAllByFile(@PathParam("fileId") UUID id) {
         authService.checkUserIsOwnerOfFile(id);
-        var file = fileService.getByIdOrThrow(id);
-        return userFileAccessMapper.toDtos(file.getAccesses());
+        var accesses = fileService.getAllAccessesByFileId(id);
+        return userFileAccessMapper.toDtos(accesses);
     }
 
     @POST

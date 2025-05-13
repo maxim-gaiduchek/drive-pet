@@ -1,8 +1,17 @@
-import {List, Modal, Skeleton} from "antd";
+import {List, Modal, Select, Skeleton} from "antd";
 import {useEffect, useState} from "react";
 import {getRequest} from "../../../Services/RequestService";
 import {apiUrl} from "../../../config";
 import {UserOutlined} from "@ant-design/icons";
+
+const accessTypes = {
+    "READ": {
+        label: "Reader"
+    },
+    "READ_WRITE": {
+        label: "Editor"
+    },
+}
 
 export function UserAccessListModal({item, isModalOpen, setIsModalOpen}) {
     const [userAccesses, setUserAccesses] = useState([]);
@@ -12,6 +21,11 @@ export function UserAccessListModal({item, isModalOpen, setIsModalOpen}) {
     const handleCancel = (e) => {
         e.stopPropagation();
         setIsModalOpen(false);
+    }
+
+    const getAccessType = (userAccess) => {
+        let accessType = userAccess.accessType;
+        return accessType === "OWNER" ? "Owner" : accessType;
     }
 
     useEffect(() => {
@@ -51,20 +65,32 @@ export function UserAccessListModal({item, isModalOpen, setIsModalOpen}) {
                         margin: "10px 30px",
                     }}
                     loading={initLoading}
-                    renderItem={item =>
-                        <List.Item
-                            /*actions={actions}*/
-                        >
-                            <Skeleton avatar title={false} loading={false} active>
-                                <List.Item.Meta
-                                    avatar={<UserOutlined/>}
-                                    title={`${item.user.firstName} ${item.user.lastName}`}
-                                    description={item.user.email}
-                                />
-                                <div>content</div>
-                            </Skeleton>
-                        </List.Item>
-                    }
+                    renderItem={userAccess => {
+                        let title = `${userAccess.user.firstName} ${userAccess.user.lastName}`;
+                        if (userAccess.user.id === +localStorage.getItem("loginUserId")) {
+                            title += " (You)"
+                        }
+                        return (
+                            <List.Item
+                                onClick={e => e.stopPropagation()}
+                                /*actions={actions}*/
+                            >
+                                <Skeleton avatar title={false} loading={false} active>
+                                    <List.Item.Meta
+                                        avatar={<UserOutlined/>}
+                                        title={title}
+                                        description={userAccess.user.email}
+                                    />
+                                    <Select placeholder={"Choose access type"} value={getAccessType(userAccess)}
+                                            options={Object.entries(accessTypes).map(([key, value]) => {
+                                                return {label: value.label, value: key}
+                                            })}
+                                            disabled={!isModalOpen || userAccess.user.id === item.owner.id}
+                                            style={{width: "30%", margin: "10px 10px"}}/>
+                                </Skeleton>
+                            </List.Item>
+                        )
+                    }}
                 />
             </Modal>
         </>

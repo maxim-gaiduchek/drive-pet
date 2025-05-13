@@ -4,6 +4,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.dto.FileForm;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UpdateFileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UserAccessDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UuidBaseInfoDto;
+import cz.cvut.fit.ejk.gaidumax.drive.entity.BaseEntity;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
@@ -27,7 +28,9 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileInputStream;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -135,6 +138,15 @@ public class FileServiceImpl implements FileService {
         var file = getByIdOrThrow(id);
         storage.delete(file.getS3FilePath());
         fileRepository.delete(file);
+    }
+
+    @Override
+    public List<UserFileAccess> getAllAccessesByFileId(UUID id) {
+        var file = getByIdOrThrow(id);
+        var accesses = file.getAccesses();
+        accesses.sort(Comparator.comparing(UserFileAccess::getAccessType)
+                .thenComparing(BaseEntity::getCreatedAt));
+        return accesses;
     }
 
     // TODO create folder accesses

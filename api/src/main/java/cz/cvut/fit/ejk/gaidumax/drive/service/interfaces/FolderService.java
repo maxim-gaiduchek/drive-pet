@@ -23,6 +23,8 @@ public interface FolderService {
 
     void delete(UUID id);
 
+    List<UserFolderAccess> getAllAccessesByFolderId(UUID id);
+
     UserFolderAccess createAccess(UUID folderId, Long userId, UserAccessDto userAccessDto);
 
     UserFolderAccess updateAccess(UUID folderId, Long userId, UserAccessDto userAccessDto);

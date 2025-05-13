@@ -31,9 +31,8 @@ public class UserFolderAccessController {
     @Path("/folders/{folderId}/accesses")
     @Authenticated
     public List<UserAccessDto> getAllByFolder(@PathParam("folderId") UUID id) {
-        authService.checkUserIsOwnerOfFolder(id);
-        var folder = folderService.getByIdOrThrow(id);
-        return userFolderAccessMapper.toDtos(folder.getAccesses());
+        var accesses = folderService.getAllAccessesByFolderId(id);
+        return userFolderAccessMapper.toDtos(accesses);
     }
 
     @POST
