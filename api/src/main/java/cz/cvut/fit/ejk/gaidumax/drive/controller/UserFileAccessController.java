@@ -17,7 +17,7 @@ import jakarta.ws.rs.PathParam;
 import java.util.List;
 import java.util.UUID;
 
-@Path("/")
+@Path("/api")
 public class UserFileAccessController {
 
     @Inject

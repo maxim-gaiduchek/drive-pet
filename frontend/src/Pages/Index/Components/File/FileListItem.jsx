@@ -1,12 +1,14 @@
-import {CloudDownloadOutlined, DeleteOutlined, FileOutlined} from "@ant-design/icons";
+import {CloudDownloadOutlined, DeleteOutlined, FileOutlined, UserOutlined} from "@ant-design/icons";
 import {Button, Flex, Image, List, Modal, Popconfirm, Skeleton} from "antd";
 import {useState} from "react";
 import {Link} from "react-router-dom";
 import ReactPlayer from 'react-player'
 import {deleteFile} from "../../../../Services/FileService";
+import {UserAccessListModal} from "../UserAccessListModal";
 
 export function FileListItem({file, setItemsUpdated}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUserAccessEditOpen, setIsUserAccessEditOpen] = useState(false);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -23,6 +25,10 @@ export function FileListItem({file, setItemsUpdated}) {
             .then(() => {
                 setItemsUpdated(true);
             });
+    }
+    const handleUserAccessEditOpen = (e) => {
+        e.stopPropagation();
+        setIsUserAccessEditOpen(true);
     }
 
     let fileType = file.fileType.split("/")[0];
@@ -54,6 +60,11 @@ export function FileListItem({file, setItemsUpdated}) {
     let actions = [];
     if (file.userAccessType === 'OWNER') {
         actions.push(
+            <>
+                <UserOutlined onClick={handleUserAccessEditOpen} style={{color: "#1677ff"}}/>
+                <UserAccessListModal item={file} isModalOpen={isUserAccessEditOpen}
+                                     setIsModalOpen={setIsUserAccessEditOpen}/>
+            </>,
             <Popconfirm
                 title={"Delete file " + file.name}
                 description={"Are you sure to delete this file?"}
