@@ -17,7 +17,7 @@ import jakarta.ws.rs.PathParam;
 import java.util.List;
 import java.util.UUID;
 
-@Path("/api")
+@Path("/files")
 public class UserFileAccessController {
 
     @Inject
@@ -28,7 +28,7 @@ public class UserFileAccessController {
     AuthService authService;
 
     @GET
-    @Path("/files/{fileId}/accesses")
+    @Path("/{fileId}/accesses")
     @Authenticated
     public List<UserAccessDto> getAllByFile(@PathParam("fileId") UUID id) {
         authService.checkUserIsOwnerOfFile(id);
@@ -37,7 +37,7 @@ public class UserFileAccessController {
     }
 
     @POST
-    @Path("/files/{fileId}/accesses/users/{userId}")
+    @Path("/{fileId}/accesses/users/{userId}")
     @Authenticated
     public UserAccessDto create(@PathParam("fileId") UUID fileId, @PathParam("userId") Long userId,
                                 @Valid UserAccessDto userAccessDto) {
@@ -47,7 +47,7 @@ public class UserFileAccessController {
     }
 
     @PUT
-    @Path("/files/{fileId}/accesses/users/{userId}")
+    @Path("/{fileId}/accesses/users/{userId}")
     @Authenticated
     public UserAccessDto update(@PathParam("fileId") UUID fileId, @PathParam("userId") Long userId,
                                 @Valid UserAccessDto userAccessDto) {
@@ -57,7 +57,7 @@ public class UserFileAccessController {
     }
 
     @DELETE
-    @Path("/files/{fileId}/accesses/users/{userId}")
+    @Path("/{fileId}/accesses/users/{userId}")
     @Authenticated
     public void delete(@PathParam("fileId") UUID fileId, @PathParam("userId") Long userId) {
         authService.checkUserIsOwnerOfFile(fileId);

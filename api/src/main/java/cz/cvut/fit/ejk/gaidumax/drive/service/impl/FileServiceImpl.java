@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -40,6 +41,8 @@ import java.util.UUID;
 public class FileServiceImpl implements FileService {
 
     private static final String FILE_PATH_TEMPLATE = "%s/%d/%s";
+    private static final Set<UserAccessType> PERMITTED_USER_ACCESS_TYPES =
+            Set.of(UserAccessType.READ, UserAccessType.READ_WRITE);
 
     @Inject
     FileRepository fileRepository;
@@ -157,11 +160,19 @@ public class FileServiceImpl implements FileService {
         if (existedAccess != null) {
             return existedAccess;
         }
+        checkPermittedUserAccessTypes(userAccessDto.getAccessType());
         var user = userService.getByIdOrThrow(userId);
         var access = buildUserAccess(file, user, userAccessDto.getAccessType());
         file.getAccesses().add(access);
         var savedFile = fileRepository.save(file);
         return FileUtils.fetchAccess(savedFile, user.getId());
+    }
+
+    private void checkPermittedUserAccessTypes(UserAccessType userAccessType) {
+        if (!PERMITTED_USER_ACCESS_TYPES.contains(userAccessType)) {
+            throw new AccessException(FileExceptionCode.INVALID_USER_ACCESS_TYPE,
+                    userAccessType, PERMITTED_USER_ACCESS_TYPES);
+        }
     }
 
     @Override
@@ -179,9 +190,7 @@ public class FileServiceImpl implements FileService {
         if (access == null) {
             throw new AccessException(FileExceptionCode.USER_HAS_NO_ACCESS_TO_FILE, userId, file.getId());
         }
-        if (UserAccessType.OWNER.equals(userAccessDto.getAccessType())) {
-            throw new AccessException(FileExceptionCode.ONLY_ONE_USER_CAN_BE_OWNER);
-        }
+        checkPermittedUserAccessTypes(userAccessDto.getAccessType());
     }
 
     // TODO delete folder accesses
