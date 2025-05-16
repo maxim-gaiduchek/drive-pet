@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,10 @@ public class File extends UuidBaseEntity {
     @ManyToOne
     @JoinColumn(name = "folder_id")
     private Folder parentFolder;
+    @Column(name = "access_token")
+    private String accessToken;
+    @Column(name = "access_token_created_at")
+    private ZonedDateTime accessTokenCreatedAt;
 
     public List<UserFileAccess> getAccesses() {
         if (accesses == null) {

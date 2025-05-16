@@ -51,16 +51,26 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void checkUserIsOwnerOfFile(UUID fileId) {
+    public boolean isUserOwnerOfFile(UUID fileId) {
         var file = fileService.getByIdOrThrow(fileId);
-        checkUserIsOwnerOfFile(file);
+        return isUserOwnerOfFile(file);
+    }
+
+    @Override
+    public boolean isUserOwnerOfFile(File file) {
+        var userId = securityContextProvider.getUserId();
+        var access = FileUtils.fetchAccess(file, userId);
+        return access != null && UserAccessType.OWNER.equals(access.getAccessType());
+    }
+
+    @Override
+    public void checkUserIsOwnerOfFile(UUID fileId) {
+        check(() -> isUserOwnerOfFile(fileId));
     }
 
     @Override
     public void checkUserIsOwnerOfFile(File file) {
-        var userId = securityContextProvider.getUserId();
-        var access = FileUtils.fetchAccess(file, userId);
-        check(() -> access != null && UserAccessType.OWNER.equals(access.getAccessType()));
+        check(() -> isUserOwnerOfFile(file));
     }
 
     @Override
@@ -80,16 +90,26 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void checkUserIsOwnerOfFolder(UUID folderId) {
+    public boolean isUserOwnerOfFolder(UUID folderId) {
         var folder = folderService.getByIdOrThrow(folderId);
-        checkUserIsOwnerOfFolder(folder);
+        return isUserOwnerOfFolder(folder);
+    }
+
+    @Override
+    public boolean isUserOwnerOfFolder(Folder folder) {
+        var userId = securityContextProvider.getUserId();
+        var access = FolderUtils.fetchAccess(folder, userId);
+        return access != null && UserAccessType.OWNER.equals(access.getAccessType());
+    }
+
+    @Override
+    public void checkUserIsOwnerOfFolder(UUID folderId) {
+        check(() -> isUserOwnerOfFolder(folderId));
     }
 
     @Override
     public void checkUserIsOwnerOfFolder(Folder folder) {
-        var userId = securityContextProvider.getUserId();
-        var access = FolderUtils.fetchAccess(folder, userId);
-        check(() -> access != null && UserAccessType.OWNER.equals(access.getAccessType()));
+        check(() -> isUserOwnerOfFolder(folder));
     }
 
     @Override

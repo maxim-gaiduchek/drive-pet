@@ -27,4 +27,5 @@ public class FileDto {
     private UserDto author;
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
+    private String accessToken;
 }

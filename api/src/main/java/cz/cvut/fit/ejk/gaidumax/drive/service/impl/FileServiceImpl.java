@@ -14,6 +14,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.exception.AbstractException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.AccessException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.FileException;
+import cz.cvut.fit.ejk.gaidumax.drive.exception.code.AccessExceptionCode;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.code.FileExceptionCode;
 import cz.cvut.fit.ejk.gaidumax.drive.repository.FileRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
@@ -26,8 +27,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.FileInputStream;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +46,7 @@ public class FileServiceImpl implements FileService {
     private static final String FILE_PATH_TEMPLATE = "%s/%d/%s";
     private static final Set<UserAccessType> PERMITTED_USER_ACCESS_TYPES =
             Set.of(UserAccessType.READ, UserAccessType.READ_WRITE);
+    private static final int ACCESS_TOKEN_SIZE = 32;
 
     @Inject
     FileRepository fileRepository;
@@ -168,6 +172,15 @@ public class FileServiceImpl implements FileService {
         return FileUtils.fetchAccess(savedFile, user.getId());
     }
 
+    @Override
+    public File createAccessToken(UUID id) {
+        var file = getByIdOrThrow(id);
+        var newAccessToken = RandomStringUtils.randomAlphabetic(ACCESS_TOKEN_SIZE);
+        file.setAccessToken(newAccessToken);
+        file.setAccessTokenCreatedAt(ZonedDateTime.now());
+        return fileRepository.save(file);
+    }
+
     private void checkPermittedUserAccessTypes(UserAccessType userAccessType) {
         if (!PERMITTED_USER_ACCESS_TYPES.contains(userAccessType)) {
             throw new AccessException(FileExceptionCode.INVALID_USER_ACCESS_TYPE,
@@ -191,6 +204,22 @@ public class FileServiceImpl implements FileService {
             throw new AccessException(FileExceptionCode.USER_HAS_NO_ACCESS_TO_FILE, userId, file.getId());
         }
         checkPermittedUserAccessTypes(userAccessDto.getAccessType());
+    }
+
+    // TODO create folder accesses
+    @Override
+    public File addAccessByAccessToken(String accessToken) {
+        var file = fileRepository.findByAccessToken(accessToken)
+                .orElseThrow(() -> new AccessException(AccessExceptionCode.ACCESS_TOKEN_INVALID));
+        var userId = securityContextProvider.getUserId();
+        var existingAccess = FileUtils.fetchAccess(file, userId);
+        if (existingAccess != null) {
+            return file;
+        }
+        var user = userService.getByIdOrThrow(userId);
+        var access = buildUserAccess(file, user, UserAccessType.READ);
+        file.getAccesses().add(access);
+        return fileRepository.save(file);
     }
 
     // TODO delete folder accesses

@@ -29,4 +29,5 @@ public class ItemDto {
     private UserAccessType userAccessType;
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
+    private String accessToken;
 }

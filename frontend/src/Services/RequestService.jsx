@@ -96,7 +96,7 @@ function buildQueryParams(queryParams) {
     return "?" + urlParams.toString();
 }
 
-export async function postRequest(url, body, jsonResponse = true) {
+export async function postRequest(url, body = {}, jsonResponse = true) {
     const headers = buildHeaders();
     headers.set("Content-Type", "application/json");
     return fetch(url, {

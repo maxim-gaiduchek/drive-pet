@@ -1,6 +1,8 @@
 package cz.cvut.fit.ejk.gaidumax.drive.controller;
 
+import cz.cvut.fit.ejk.gaidumax.drive.dto.FileDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UserAccessDto;
+import cz.cvut.fit.ejk.gaidumax.drive.mapper.FileMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.mapper.UserFileAccessMapper;
 import cz.cvut.fit.ejk.gaidumax.drive.service.interfaces.FileService;
 import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.AuthService;
@@ -26,6 +28,8 @@ public class UserFileAccessController {
     UserFileAccessMapper userFileAccessMapper;
     @Inject
     AuthService authService;
+    @Inject
+    FileMapper fileMapper;
 
     @GET
     @Path("/{fileId}/accesses")
@@ -46,6 +50,14 @@ public class UserFileAccessController {
         return userFileAccessMapper.toDto(access);
     }
 
+    @POST
+    @Path("/{fileId}/accesses")
+    @Authenticated
+    public FileDto createAccessByAccessToken(@PathParam("fileId") UUID id) {
+        var file = fileService.createAccessToken(id);
+        return fileMapper.toDto(file);
+    }
+
     @PUT
     @Path("/{fileId}/accesses/users/{userId}")
     @Authenticated
@@ -54,6 +66,14 @@ public class UserFileAccessController {
         authService.checkUserIsOwnerOfFile(fileId);
         var access = fileService.updateAccess(fileId, userId, userAccessDto);
         return userFileAccessMapper.toDto(access);
+    }
+
+    @PUT
+    @Path("/accesses/{token}")
+    @Authenticated
+    public FileDto createAccessByAccessToken(@PathParam("token") String accessToken) {
+        var file = fileService.addAccessByAccessToken(accessToken);
+        return fileMapper.toDto(file);
     }
 
     @DELETE

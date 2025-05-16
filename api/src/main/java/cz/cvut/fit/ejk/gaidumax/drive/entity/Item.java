@@ -14,6 +14,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Immutable;
 
+import java.time.ZonedDateTime;
+
 @Entity
 @Immutable
 @Table(name = "item_view")
@@ -47,4 +49,8 @@ public class Item extends UuidBaseEntity {
     @Column(name = "user_access_type")
     @Enumerated(EnumType.STRING)
     private UserAccessType userAccessType;
+    @Column(name = "access_token")
+    private String accessToken;
+    @Column(name = "access_token_created_at")
+    private ZonedDateTime accessTokenCreatedAt;
 }

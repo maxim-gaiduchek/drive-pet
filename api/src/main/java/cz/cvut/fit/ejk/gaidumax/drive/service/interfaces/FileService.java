@@ -26,7 +26,11 @@ public interface FileService {
 
     UserFileAccess createAccess(UUID fileId, Long userId, UserAccessDto userAccessDto);
 
+    File createAccessToken(UUID id);
+
     UserFileAccess updateAccess(UUID fileId, Long userId, UserAccessDto userAccessDto);
+
+    File addAccessByAccessToken(String accessToken);
 
     void deleteAccess(UUID fileId, Long userId);
 }

@@ -11,6 +11,10 @@ public interface AuthService {
 
     void checkUserHasWriteAccessToFile(UUID fileId);
 
+    boolean isUserOwnerOfFile(UUID fileId);
+
+    boolean isUserOwnerOfFile(File file);
+
     void checkUserIsOwnerOfFile(UUID fileId);
 
     void checkUserIsOwnerOfFile(File file);
@@ -18,6 +22,10 @@ public interface AuthService {
     void checkUserHasReadAccessToFolder(UUID folderId);
 
     void checkUserHasWriteAccessToFolder(UUID folderId);
+
+    boolean isUserOwnerOfFolder(UUID folderId);
+
+    boolean isUserOwnerOfFolder(Folder folder);
 
     void checkUserIsOwnerOfFolder(UUID folderId);
 

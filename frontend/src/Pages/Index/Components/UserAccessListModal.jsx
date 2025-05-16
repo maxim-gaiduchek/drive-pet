@@ -1,8 +1,10 @@
-import {Divider, List, Modal, Popconfirm, Select, Skeleton} from "antd";
+import {Button, Divider, Flex, Input, List, Modal, Popconfirm, Select, Skeleton} from "antd";
 import {useEffect, useState} from "react";
-import {deleteRequest, getRequest, putRequest} from "../../../Services/RequestService";
-import {apiUrl} from "../../../config";
+import {deleteRequest, getRequest, postRequest, putRequest} from "../../../Services/RequestService";
+import {apiUrl, host} from "../../../config";
 import {DeleteOutlined, UserOutlined} from "@ant-design/icons";
+import {secondaryBackgroundColor} from "../../../colors";
+import {toast} from "react-toastify";
 
 const accessTypes = {
     "READ": {
@@ -12,10 +14,14 @@ const accessTypes = {
         label: "Editor"
     },
 }
+const accessLinkPrefix = host + "/drive/access/";
 
 export function UserAccessListModal({item, isModalOpen, setIsModalOpen}) {
     const [userAccesses, setUserAccesses] = useState([]);
     const [initLoading, setInitLoading] = useState(true);
+    const [accessLink, setAccessLink] = useState(item.accessToken
+        ? accessLinkPrefix + item.accessToken
+        : "");
     const type = item.type.toLowerCase();
 
     const handleOk = (e) => {
@@ -38,7 +44,7 @@ export function UserAccessListModal({item, isModalOpen, setIsModalOpen}) {
             .then((userAccess) => {
                 const newUserAccesses = userAccesses.map(access => {
                     if (access.user.id === userAccess.user.id) {
-                        return { ...access, accessType: userAccess.accessType };
+                        return {...access, accessType: userAccess.accessType};
                     }
                     return access;
                 });
@@ -51,6 +57,32 @@ export function UserAccessListModal({item, isModalOpen, setIsModalOpen}) {
             .then(() => {
                 let newUserAccesses = userAccesses.filter(access => access.user.id !== userId);
                 setUserAccesses(newUserAccesses);
+            })
+    }
+
+    const copyAccessLink = (e) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(accessLink)
+            .then(() => {
+                toast.success("Access link successfully copied!");
+            })
+            .catch((err) => {
+                toast.error("Error copying access link");
+                console.error(err);
+            });
+    }
+    const generateAccessToken = (e) => {
+        e.stopPropagation();
+        postRequest(`${apiUrl}/${type}s/${item.id}/accesses`)
+            .then(item => {
+                if (!item.accessToken) {
+                    setAccessLink("");
+                } else {
+                    setAccessLink(accessLinkPrefix + item.accessToken);
+                }
+            })
+            .catch(() => {
+                setAccessLink("");
             })
     }
 
@@ -76,6 +108,29 @@ export function UserAccessListModal({item, isModalOpen, setIsModalOpen}) {
             style={{
                 minWidth: "800px"
             }}>
+            <Divider orientation="left">Link for other user access</Divider>
+            <Flex style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "center"
+            }}>
+                <Input value={accessLink} onClick={e => e.stopPropagation()}
+                       placeholder={"Click \"Generate\" to generate a link to share"} style={{
+                    width: "40%",
+                    margin: "0 3px",
+                    caretColor: "transparent"
+                }}/>
+                <Button onClick={copyAccessLink} disabled={!accessLink || accessLink.length === 0} style={{
+                    width: "110px",
+                    backgroundColor: secondaryBackgroundColor,
+                    margin: "0 3px"
+                }}>Copy</Button>
+                <Button onClick={generateAccessToken} style={{
+                    width: "110px",
+                    backgroundColor: secondaryBackgroundColor,
+                    margin: "0 3px"
+                }}>{accessLink && accessLink.length > 0 ? "Regenerate" : "Generate"}</Button>
+            </Flex>
             <Divider orientation="left">Users that have an access to the {type}</Divider>
             <List
                 itemLayout="horizontal"
