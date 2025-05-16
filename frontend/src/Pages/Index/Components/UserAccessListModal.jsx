@@ -87,6 +87,9 @@ export function UserAccessListModal({item, isModalOpen, setIsModalOpen}) {
     }
 
     useEffect(() => {
+        if (!isModalOpen) {
+            return;
+        }
         getRequest(`${apiUrl}/${type}s/${item.id}/accesses`)
             .then(accesses => {
                 setUserAccesses(accesses);
@@ -96,7 +99,7 @@ export function UserAccessListModal({item, isModalOpen, setIsModalOpen}) {
                 setUserAccesses([]);
                 setInitLoading(false);
             })
-    }, []);
+    }, [isModalOpen]);
 
     return (
         <Modal

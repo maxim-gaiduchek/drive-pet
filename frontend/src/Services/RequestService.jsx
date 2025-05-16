@@ -123,7 +123,7 @@ export async function postRequestFormData(url, body, jsonResponse = true) {
         })
 }
 
-export async function putRequest(url, body, jsonResponse = true) {
+export async function putRequest(url, body = {}, jsonResponse = true) {
     const headers = buildHeaders();
     headers.set("Content-Type", "application/json");
     return fetch(url, {

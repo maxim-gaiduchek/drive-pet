@@ -19,9 +19,9 @@ public class FileRepository extends UuidBaseEntityRepository<File> {
             var sql = createQuery("""
                     select f
                     from File f
-                    where accessToken = :token
+                    where f.accessToken = :token
                     """);
-            sql.setParameter(":token", accessToken);
+            sql.setParameter("token", accessToken);
             var result = sql.getSingleResult();
             return Optional.ofNullable(result);
         } catch (NoResultException | NonUniqueResultException e) {
