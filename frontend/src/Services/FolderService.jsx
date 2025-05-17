@@ -30,6 +30,5 @@ export async function updateFolder(id, name, parentFolder) {
             id: parentFolder.id
         };
     }
-    console.log(body);
     return putRequest(apiUrl + "/folders/" + id, body);
 }

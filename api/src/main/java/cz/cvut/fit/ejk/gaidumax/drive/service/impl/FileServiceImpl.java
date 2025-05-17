@@ -28,6 +28,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.FileInputStream;
 import java.time.ZonedDateTime;
@@ -42,6 +43,9 @@ import java.util.UUID;
 @Slf4j
 @ApplicationScoped
 public class FileServiceImpl implements FileService {
+
+    @ConfigProperty(name = "drive-pet.item.access.token.age")
+    long accessTokenAge;
 
     private static final String FILE_PATH_TEMPLATE = "%s/%d/%s";
     private static final Set<UserAccessType> PERMITTED_USER_ACCESS_TYPES =
@@ -211,6 +215,7 @@ public class FileServiceImpl implements FileService {
     public File addAccessByAccessToken(String accessToken) {
         var file = fileRepository.findByAccessToken(accessToken)
                 .orElseThrow(() -> new AccessException(AccessExceptionCode.ACCESS_TOKEN_INVALID));
+        checkAccessTokenValidity(file);
         var userId = securityContextProvider.getUserId();
         var existingAccess = FileUtils.fetchAccess(file, userId);
         if (existingAccess != null) {
@@ -220,6 +225,12 @@ public class FileServiceImpl implements FileService {
         var access = buildUserAccess(file, user, UserAccessType.READ);
         file.getAccesses().add(access);
         return fileRepository.save(file);
+    }
+
+    private void checkAccessTokenValidity(File file) {
+        if (file.getAccessTokenCreatedAt().plusMinutes(accessTokenAge).isBefore(ZonedDateTime.now())) {
+            throw new AccessException(AccessExceptionCode.ACCESS_TOKEN_INVALID);
+        }
     }
 
     // TODO delete folder accesses

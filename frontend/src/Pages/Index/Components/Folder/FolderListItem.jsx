@@ -22,8 +22,7 @@ export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
                 setFolderName(folder.name);
                 setItemsUpdated(true);
             })
-            .catch((e) => {
-                console.log(e)
+            .catch(() => {
                 setLoading(false);
             })
     };
@@ -72,7 +71,10 @@ export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
                     </>
                 )}>
                 <Input placeholder="Enter folder name" value={folderName} count={{max: 30}}
-                       onChange={e => setFolderName(e.target.value)} disabled={loading}
+                       onChange={e => {
+                           e.stopPropagation();
+                           setFolderName(e.target.value);
+                       }} disabled={loading}
                        status={folderName.length === 0 ? "error" : ""}/>
             </Modal>
         </>

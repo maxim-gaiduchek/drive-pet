@@ -1,24 +1,54 @@
-import {CloudDownloadOutlined, DeleteOutlined, FileOutlined, UserOutlined} from "@ant-design/icons";
-import {Button, Flex, Image, List, Modal, Popconfirm, Skeleton} from "antd";
+import {CloudDownloadOutlined, DeleteOutlined, EditOutlined, FileOutlined, UserOutlined} from "@ant-design/icons";
+import {Button, Flex, Image, Input, List, Modal, Popconfirm, Skeleton} from "antd";
 import {useState} from "react";
 import {Link} from "react-router-dom";
 import ReactPlayer from 'react-player'
-import {deleteFile} from "../../../../Services/FileService";
+import {deleteFile, updateFile} from "../../../../Services/FileService";
 import {UserAccessListModal} from "../UserAccessListModal";
+import {format} from 'date-fns';
 
 export function FileListItem({file, setItemsUpdated}) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editLoading, setEditLoading] = useState(false);
+    const [fileName, setFileName] = useState(file.name);
+
+    const [isAccessesModalOpen, setIsAccessesModalOpen] = useState(false);
     const [isUserAccessEditOpen, setIsUserAccessEditOpen] = useState(false);
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    const showEditModal = (e) => {
+        e.stopPropagation()
+        setIsEditModalOpen(true);
+        setFileName(file.name);
     };
-    const handleOk = () => {
-        setIsModalOpen(false);
+    const handleEditOk = (e) => {
+        e.stopPropagation();
+        setEditLoading(true);
+        updateFile(file.id, fileName, file.parentFolder)
+            .then(file => {
+                setIsEditModalOpen(false);
+                setEditLoading(false);
+                setFileName(file.fileName);
+                setItemsUpdated(true);
+            })
+            .catch(() => {
+                setEditLoading(false);
+            })
     };
-    const handleCancel = () => {
-        setIsModalOpen(false);
+    const handleEditCancel = (e) => {
+        e.stopPropagation()
+        setIsEditModalOpen(false);
     };
+
+    const showAccessesModal = () => {
+        setIsAccessesModalOpen(true);
+    };
+    const handleAccessesOk = () => {
+        setIsAccessesModalOpen(false);
+    };
+    const handleAccessesCancel = () => {
+        setIsAccessesModalOpen(false);
+    };
+
     const handleDelete = (e) => {
         e.stopPropagation();
         return deleteFile(file.id)
@@ -26,6 +56,7 @@ export function FileListItem({file, setItemsUpdated}) {
                 setItemsUpdated(true);
             });
     }
+
     const handleUserAccessEditOpen = (e) => {
         e.stopPropagation();
         setIsUserAccessEditOpen(true);
@@ -58,6 +89,11 @@ export function FileListItem({file, setItemsUpdated}) {
         );
     }
     let actions = [];
+    if (file.userAccessType === 'OWNER' || file.userAccessType === 'READ_WRITE') {
+        actions.push(
+            <EditOutlined onClick={showEditModal} style={{color: "#1677ff"}}/>
+        )
+    }
     if (file.userAccessType === 'OWNER') {
         actions.push(
             <>
@@ -83,23 +119,23 @@ export function FileListItem({file, setItemsUpdated}) {
     return (
         <>
             <List.Item
-                onClick={showModal}
+                onClick={showAccessesModal}
                 actions={actions}
             >
                 <Skeleton avatar title={false} loading={false} active>
                     <List.Item.Meta
                         avatar={<FileOutlined/>}
                         title={<a>{file.name}</a>}
-                        description={`Size: ${formatBytes(file.size)}, By: ${file.owner.firstName} ${file.owner.lastName} (${file.owner.email})`}
+                        description={`By: ${file.owner.firstName} ${file.owner.lastName} (${file.owner.email}), Size: ${formatBytes(file.size)}, Created: ${formatDate(file.createdAt)}`}
                     />
                 </Skeleton>
             </List.Item>
             <Modal
                 title={modalTitle}
                 closable={{"aria-label": "Custom Close Button"}}
-                open={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
+                open={isAccessesModalOpen}
+                onOk={handleAccessesOk}
+                onCancel={handleAccessesCancel}
                 footer={(_, {OkBtn}) => (
                     <>
                         <Link to={file.path} style={{margin: "0 10px", padding: 0}}>
@@ -118,6 +154,29 @@ export function FileListItem({file, setItemsUpdated}) {
                     {modalContent}
                 </Flex>
             </Modal>
+            <Modal
+                title={"Edit file " + file.name}
+                closable={{"aria-label": "Custom Close Button"}}
+                open={isEditModalOpen}
+                onCancel={handleEditCancel}
+                footer={(_, {OkBtn, CancelBtn}) => (
+                    <>
+                        <CancelBtn/>
+                        <Button type={"primary"} loading={editLoading} onClick={handleEditOk}
+                                disabled={fileName.length === 0}>
+                            Save
+                        </Button>
+                    </>
+                )}
+            >
+                <Input placeholder="Enter file name" value={fileName} count={{max: 30}}
+                       onClick={e => e.stopPropagation()}
+                       onChange={e => {
+                           e.stopPropagation();
+                           setFileName(e.target.value);
+                       }} disabled={editLoading}
+                       status={fileName.length === 0 ? "error" : ""}/>
+            </Modal>
         </>
     )
 }
@@ -131,4 +190,8 @@ function formatBytes(bytes, decimals = 2) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     const value = parseFloat((bytes / Math.pow(k, i)).toFixed(decimals));
     return `${value} ${sizes[i]}`;
+}
+
+function formatDate(isoDate) {
+    return format(new Date(isoDate), 'dd.MM.yyyy HH:mm');
 }
