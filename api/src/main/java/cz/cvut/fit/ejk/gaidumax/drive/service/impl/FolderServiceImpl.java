@@ -20,6 +20,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContex
 import cz.cvut.fit.ejk.gaidumax.drive.utils.FolderUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -107,10 +108,22 @@ public class FolderServiceImpl implements FolderService {
         }
     }
 
+    @Transactional(Transactional.TxType.MANDATORY)
+    @Override
+    public void setupUserInternalFileReadAccessForParentFolders(UUID childFolderId, Long userId) {
+        folderRepository.setupUserInternalFileReadAccessForParentFolders(childFolderId, userId);
+    }
+
     @Override
     public void delete(UUID id) {
         var folder = getByIdOrThrow(id);
         folderRepository.delete(folder);
+    }
+
+    @Transactional(Transactional.TxType.MANDATORY)
+    @Override
+    public void removeUserInternalFileReadAccessForParentFolders(UUID childFolderId, Long userId) {
+        folderRepository.removeUserInternalFileReadAccessForParentFolders(childFolderId, userId);
     }
 
     @Override

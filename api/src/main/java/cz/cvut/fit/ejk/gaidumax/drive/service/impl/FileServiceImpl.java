@@ -160,7 +160,7 @@ public class FileServiceImpl implements FileService {
         return accesses;
     }
 
-    // TODO create folder accesses
+    @Transactional
     @Override
     public UserFileAccess createAccess(UUID fileId, Long userId, UserAccessDto userAccessDto) {
         var file = getByIdOrThrow(fileId);
@@ -173,6 +173,7 @@ public class FileServiceImpl implements FileService {
         var access = buildUserAccess(file, user, userAccessDto.getAccessType());
         file.getAccesses().add(access);
         var savedFile = fileRepository.save(file);
+        setupUserInternalFileReadAccessForParentFolders(savedFile, user);
         return FileUtils.fetchAccess(savedFile, user.getId());
     }
 
@@ -180,6 +181,12 @@ public class FileServiceImpl implements FileService {
         if (!PERMITTED_USER_ACCESS_TYPES.contains(userAccessType)) {
             throw new AccessException(FileExceptionCode.INVALID_USER_ACCESS_TYPE,
                     userAccessType, PERMITTED_USER_ACCESS_TYPES);
+        }
+    }
+
+    private void setupUserInternalFileReadAccessForParentFolders(File file, User user) {
+        if (file.getParentFolder() != null) {
+            folderService.setupUserInternalFileReadAccessForParentFolders(file.getParentFolder().getId(), user.getId());
         }
     }
 
@@ -218,7 +225,7 @@ public class FileServiceImpl implements FileService {
         checkPermittedUserAccessTypes(userAccessDto.getAccessType());
     }
 
-    // TODO create folder accesses
+    @Transactional
     @Override
     public File addAccessByAccessToken(String accessToken) {
         var file = fileRepository.findByAccessToken(accessToken)
@@ -232,7 +239,9 @@ public class FileServiceImpl implements FileService {
         var user = userService.getByIdOrThrow(userId);
         var access = buildUserAccess(file, user, UserAccessType.READ);
         file.getAccesses().add(access);
-        return fileRepository.save(file);
+        var savedFile = fileRepository.save(file);
+        setupUserInternalFileReadAccessForParentFolders(savedFile, user);
+        return savedFile;
     }
 
     private void checkAccessTokenValidity(File file) {
@@ -241,12 +250,15 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    // TODO delete folder accesses
+    @Transactional
     @Override
     public void deleteAccess(UUID fileId, Long userId) {
         var file = getByIdOrThrow(fileId);
-        file.getAccesses()
+        var removed = file.getAccesses()
                 .removeIf(access -> Objects.equals(access.getUser().getId(), userId));
-        fileRepository.save(file);
+        var savedFile = fileRepository.save(file);
+        if (removed && savedFile.getParentFolder() != null) {
+            folderService.removeUserInternalFileReadAccessForParentFolders(savedFile.getParentFolder().getId(), userId);
+        }
     }
 }

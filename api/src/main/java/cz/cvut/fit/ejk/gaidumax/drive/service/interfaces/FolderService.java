@@ -4,6 +4,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.dto.FolderDto;
 import cz.cvut.fit.ejk.gaidumax.drive.dto.UserAccessDto;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.UserFolderAccess;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,12 @@ public interface FolderService {
 
     Folder update(UUID id, FolderDto folderDto);
 
+    void setupUserInternalFileReadAccessForParentFolders(UUID childFolderId, Long userId);
+
     void delete(UUID id);
+
+    @Transactional(Transactional.TxType.MANDATORY)
+    void removeUserInternalFileReadAccessForParentFolders(UUID childFolderId, Long userId);
 
     List<UserFolderAccess> getAllAccessesByFolderId(UUID id);
 
