@@ -169,7 +169,7 @@ export function FileListItem({file, setItemsUpdated}) {
                     </>
                 )}
             >
-                <Input placeholder="Enter file name" value={fileName} count={{max: 30}}
+                <Input placeholder="Enter file name" value={fileName}
                        onClick={e => e.stopPropagation()}
                        onChange={e => {
                            e.stopPropagation();

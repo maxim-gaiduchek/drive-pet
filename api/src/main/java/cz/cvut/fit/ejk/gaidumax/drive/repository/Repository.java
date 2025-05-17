@@ -57,6 +57,10 @@ public class Repository<E, T> {
         return entityManager.createQuery(sql, entityClass);
     }
 
+    <R> TypedQuery<R> createQuery(String sql, Class<R> resultClass) {
+        return entityManager.createQuery(sql, resultClass);
+    }
+
     TypedQuery<E> createQuery(String sql, Sort sort) {
         var sqlWithSort = appendSortToQuery(sql, sort);
         return createQuery(sqlWithSort);

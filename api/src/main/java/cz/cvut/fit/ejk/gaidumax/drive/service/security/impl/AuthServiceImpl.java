@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 public class AuthServiceImpl implements AuthService {
 
     private static final Set<UserAccessType> READ_ROLES = Set.of(UserAccessType.OWNER, UserAccessType.READ,
-            UserAccessType.READ_WRITE);
+            UserAccessType.READ_WRITE, UserAccessType.INTERNAL_FILE_READ);
     private static final Set<UserAccessType> WRITE_ROLES = Set.of(UserAccessType.OWNER, UserAccessType.READ_WRITE);
 
     @Inject

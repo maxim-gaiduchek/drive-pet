@@ -2,6 +2,7 @@ import {EditOutlined, FolderOutlined} from "@ant-design/icons";
 import {Button, Input, List, Modal, Skeleton} from "antd";
 import {useState} from "react";
 import {updateFolder} from "../../../../Services/FolderService";
+import {format} from "date-fns";
 
 export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,7 +53,7 @@ export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
                     <List.Item.Meta
                         avatar={<FolderOutlined/>}
                         title={<a>{folder.name}</a>}
-                        description={`By: ${folder.owner.firstName} ${folder.owner.lastName} (${folder.owner.email})`}
+                        description={`By: ${folder.owner.firstName} ${folder.owner.lastName} (${folder.owner.email}), Created: ${formatDate(folder.createdAt)}`}
                     />
                 </Skeleton>
             </List.Item>
@@ -79,4 +80,8 @@ export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
             </Modal>
         </>
     )
+}
+
+function formatDate(isoDate) {
+    return format(new Date(isoDate), 'dd.MM.yyyy HH:mm');
 }

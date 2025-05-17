@@ -176,20 +176,28 @@ public class FileServiceImpl implements FileService {
         return FileUtils.fetchAccess(savedFile, user.getId());
     }
 
-    @Override
-    public File createAccessToken(UUID id) {
-        var file = getByIdOrThrow(id);
-        var newAccessToken = RandomStringUtils.randomAlphabetic(ACCESS_TOKEN_SIZE);
-        file.setAccessToken(newAccessToken);
-        file.setAccessTokenCreatedAt(ZonedDateTime.now());
-        return fileRepository.save(file);
-    }
-
     private void checkPermittedUserAccessTypes(UserAccessType userAccessType) {
         if (!PERMITTED_USER_ACCESS_TYPES.contains(userAccessType)) {
             throw new AccessException(FileExceptionCode.INVALID_USER_ACCESS_TYPE,
                     userAccessType, PERMITTED_USER_ACCESS_TYPES);
         }
+    }
+
+    @Override
+    public File createAccessToken(UUID id) {
+        var file = getByIdOrThrow(id);
+        var newAccessToken = generateAccessToken();
+        file.setAccessToken(newAccessToken);
+        file.setAccessTokenCreatedAt(ZonedDateTime.now());
+        return fileRepository.save(file);
+    }
+
+    private String generateAccessToken() {
+        String accessToken;
+        do {
+            accessToken = RandomStringUtils.randomAlphabetic(ACCESS_TOKEN_SIZE);
+        } while (fileRepository.existsByAccessToken(accessToken));
+        return accessToken;
     }
 
     @Override

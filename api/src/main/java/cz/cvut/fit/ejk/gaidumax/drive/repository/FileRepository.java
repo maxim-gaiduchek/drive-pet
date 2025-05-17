@@ -28,4 +28,20 @@ public class FileRepository extends UuidBaseEntityRepository<File> {
             return Optional.empty();
         }
     }
+
+    public boolean existsByAccessToken(String accessToken) {
+        try {
+            var sql = createQuery("""
+                    select count(f) > 0
+                    from File f
+                    where f.accessToken = :token
+                    """, Boolean.class);
+            sql.setParameter("token", accessToken);
+            return sql.getSingleResult();
+        } catch (NoResultException e) {
+            return false;
+        } catch (NonUniqueResultException e) {
+            return true;
+        }
+    }
 }
