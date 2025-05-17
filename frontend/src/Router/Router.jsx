@@ -3,6 +3,7 @@ import {IndexPage} from "../Pages/Index/IndexPage";
 import {DrivePage} from "../Pages/Index/DrivePage";
 import {LoginPage} from "../Pages/Login/LoginPage";
 import {RegistrationPage} from "../Pages/Login/RegistrationPage";
+import {UserAccessPage} from "../Pages/Access/UserAccessPage";
 
 export const router = createBrowserRouter([
     {
@@ -21,4 +22,8 @@ export const router = createBrowserRouter([
         path: "/register",
         element: <RegistrationPage/>
     },
+    {
+        path: "/drive/access/:token",
+        element: <UserAccessPage/>
+    }
 ])

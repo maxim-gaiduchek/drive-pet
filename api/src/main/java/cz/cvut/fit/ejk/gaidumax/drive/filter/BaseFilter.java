@@ -13,16 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @SuperBuilder(builderMethodName = "baseBuilder")
-public class UuidBaseFilter {
+public class BaseFilter<ID> {
 
-    protected List<UUID> ids;
+    protected List<ID> ids;
     @Builder.Default
     protected Integer page = 1;
     @Builder.Default

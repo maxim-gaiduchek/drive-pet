@@ -153,6 +153,13 @@ export function DrivePage() {
         setItemTypes(type.values);
     };
 
+    const setFolderToParent = (folder) => {
+        setParentFolder(folder);
+        setSearchParams({parentFolderId: folder.id});
+        setSearchName("");
+        setItemTypes([]);
+    };
+
     const loadMore =
         !loading && hasNext ? (
             <div
@@ -234,18 +241,11 @@ export function DrivePage() {
                     renderItem={item =>
                         item.type === 'FOLDER'
                             ? <FolderListItem folder={item} setItemsUpdated={setItemsUpdated} setFolderToParent={() =>
-                                setFolderToParent(item, setParentFolder, setSearchParams, setSearchName, setItemTypes)}/>
+                                setFolderToParent(item)}/>
                             : <FileListItem file={item} setItemsUpdated={setItemsUpdated}/>
                     }
                 />
             </Flex>
         </MainLayout>
     )
-}
-
-function setFolderToParent(folder, setParentFolder, setSearchParams, setSearchName, setItemTypes) {
-    setParentFolder(folder);
-    setSearchParams({parentFolderId: folder.id});
-    setSearchName("");
-    setItemTypes([]);
 }

@@ -36,7 +36,7 @@ public class FileController {
     @Produces(MediaType.APPLICATION_JSON)
     @Authenticated
     public FileDto get(@PathParam("id") UUID id) {
-        authService.checkUserHasAccessToFile(id);
+        authService.checkUserHasReadAccessToFile(id);
         var file = fileService.getByIdOrThrow(id);
         return fileMapper.toDto(file);
     }
@@ -56,7 +56,7 @@ public class FileController {
     @Produces(MediaType.APPLICATION_JSON)
     @Authenticated
     public FileDto update(@PathParam("id") UUID id, @Valid UpdateFileDto fileDto) {
-        authService.checkUserHasAccessToFile(id);
+        authService.checkUserHasWriteAccessToFile(id);
         var file = fileService.update(id, fileDto);
         return fileMapper.toDto(file);
     }
@@ -64,8 +64,8 @@ public class FileController {
     @DELETE
     @Path("/{id}")
     @Authenticated
-    public void update(@PathParam("id") UUID id) {
-        authService.checkUserHasAccessToFile(id);
+    public void delete(@PathParam("id") UUID id) {
+        authService.checkUserIsOwnerOfFile(id);
         fileService.delete(id);
     }
 }

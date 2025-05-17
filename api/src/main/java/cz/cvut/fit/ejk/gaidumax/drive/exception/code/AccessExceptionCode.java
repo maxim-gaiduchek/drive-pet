@@ -12,6 +12,7 @@ public enum AccessExceptionCode implements ExceptionCode {
     TOKEN_REQUIRED("API-AUTH-003", "A JWT token is required to access this resource"),
     ACCESS_DENIED("API-AUTH-004", "User does not have access to this resource"),
     INVALID_LOGIN_OR_PASSWORD("API-AUTH-005", "Invalid login or password"),
+    ACCESS_TOKEN_INVALID("API_AUTH_006", "Access token is invalid"),
     ;
 
     public final String code;

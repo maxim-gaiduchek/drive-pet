@@ -14,6 +14,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Immutable;
 
+import java.time.ZonedDateTime;
+
 @Entity
 @Immutable
 @Table(name = "item_view")
@@ -36,9 +38,19 @@ public class Item extends UuidBaseEntity {
     @Column(name = "size", nullable = false)
     private Long size;
     @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author;
+    @JoinColumn(name = "owner_id")
+    private User owner;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     @ManyToOne
     @JoinColumn(name = "folder_id")
     private Folder parentFolder;
+    @Column(name = "user_access_type")
+    @Enumerated(EnumType.STRING)
+    private UserAccessType userAccessType;
+    @Column(name = "access_token")
+    private String accessToken;
+    @Column(name = "access_token_created_at")
+    private ZonedDateTime accessTokenCreatedAt;
 }

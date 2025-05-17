@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @SuperBuilder
-public class ItemFilter extends UuidBaseFilter {
+public class ItemFilter extends BaseFilter<UUID> {
 
     private List<ItemType> types;
     private UUID parentFolderId;
@@ -23,6 +23,6 @@ public class ItemFilter extends UuidBaseFilter {
 
     {
         sortVariants.put("name", List.of("name"));
-        sortVariants.put("size", List.of("size", "name"));
+        sortVariants.put("size", List.of("size", "name", "createdAt"));
     }
 }

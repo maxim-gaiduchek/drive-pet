@@ -1,4 +1,4 @@
-import {deleteRequest, getRequest, postRequestFormData} from "./RequestService";
+import {deleteRequest, getRequest, postRequestFormData, putRequest} from "./RequestService";
 import {apiUrl} from "../config";
 
 export async function getFile(id) {
@@ -16,6 +16,18 @@ export async function createFile(file, parentFolder) {
     formData.append("dto", new Blob([JSON.stringify(body)], {type: "application/json"}));
     formData.append("file", file);
     return postRequestFormData(apiUrl + "/files", formData);
+}
+
+export async function updateFile(id, fileName, parentFolder) {
+    let body = {
+        fileName: fileName,
+    }
+    if (parentFolder && parentFolder.id) {
+        body.parentFolder = {
+            id: parentFolder.id
+        };
+    }
+    return putRequest(apiUrl + "/files/" + id, body);
 }
 
 export async function deleteFile(id) {

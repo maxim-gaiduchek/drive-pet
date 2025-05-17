@@ -1,15 +1,22 @@
 package cz.cvut.fit.ejk.gaidumax.drive.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "file")
@@ -28,10 +35,20 @@ public class File extends UuidBaseEntity {
     private String s3FilePath;
     @Column(name = "size", nullable = false)
     private Long size;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User author;
+    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<UserFileAccess> accesses;
     @ManyToOne
     @JoinColumn(name = "folder_id")
     private Folder parentFolder;
+    @Column(name = "access_token")
+    private String accessToken;
+    @Column(name = "access_token_created_at")
+    private ZonedDateTime accessTokenCreatedAt;
+
+    public List<UserFileAccess> getAccesses() {
+        if (accesses == null) {
+            accesses = new ArrayList<>();
+        }
+        return accesses;
+    }
 }

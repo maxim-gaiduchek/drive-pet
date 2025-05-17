@@ -1,13 +1,13 @@
 import {EditOutlined, FolderOutlined} from "@ant-design/icons";
 import {Button, Input, List, Modal, Skeleton} from "antd";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {updateFolder} from "../../../../Services/FolderService";
+import {format} from "date-fns";
 
 export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [folderName, setFolderName] = useState(folder.name);
-    const [saveFolder, setSaveFolder] = useState(false);
 
     const showModal = (e) => {
         e.stopPropagation();
@@ -15,7 +15,17 @@ export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
         setIsModalOpen(true);
     };
     const handleOk = () => {
-        setSaveFolder(true);
+        setLoading(true);
+        updateFolder(folder.id, folderName, folder.parentFolder)
+            .then(folder => {
+                setIsModalOpen(false);
+                setLoading(false);
+                setFolderName(folder.name);
+                setItemsUpdated(true);
+            })
+            .catch(() => {
+                setLoading(false);
+            })
     };
     const handleCancel = () => {
         if (!loading) {
@@ -24,41 +34,26 @@ export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
         }
     };
 
-    useEffect(() => {
-        if (!saveFolder) {
-            return;
-        }
-        setLoading(true);
-        updateFolder(folder.id, folderName, folder.parentFolder)
-            .then(folder => {
-                setIsModalOpen(false);
-                setSaveFolder(false);
-                setLoading(false);
-                setFolderName(folder.name);
-                setItemsUpdated(true);
-            })
-            .catch((e) => {
-                console.log(e)
-                setSaveFolder(false);
-                setLoading(false);
-            })
-    }, [saveFolder]);
+    let actions = [];
+    if (folder.userAccessType === 'OWNER') {
+        actions.push(
+            <EditOutlined onClick={showModal} style={{
+                color: "#1677ff"
+            }}/>
+        )
+    }
 
     return (
         <>
             <List.Item
                 onClick={setFolderToParent}
-                actions={[
-                    <EditOutlined onClick={showModal} style={{
-                        color: "#1677ff"
-                    }}/>
-                ]}
+                actions={actions}
             >
                 <Skeleton avatar title={false} loading={false} active>
                     <List.Item.Meta
                         avatar={<FolderOutlined/>}
                         title={<a>{folder.name}</a>}
-                        description={`By: ${folder.author.firstName} ${folder.author.lastName} (${folder.author.email})`}
+                        description={`By: ${folder.owner.firstName} ${folder.owner.lastName} (${folder.owner.email}), Created: ${formatDate(folder.createdAt)}`}
                     />
                 </Skeleton>
             </List.Item>
@@ -77,9 +72,16 @@ export function FolderListItem({folder, setFolderToParent, setItemsUpdated}) {
                     </>
                 )}>
                 <Input placeholder="Enter folder name" value={folderName} count={{max: 30}}
-                       onChange={e => setFolderName(e.target.value)} disabled={loading}
+                       onChange={e => {
+                           e.stopPropagation();
+                           setFolderName(e.target.value);
+                       }} disabled={loading}
                        status={folderName.length === 0 ? "error" : ""}/>
             </Modal>
         </>
     )
+}
+
+function formatDate(isoDate) {
+    return format(new Date(isoDate), 'dd.MM.yyyy HH:mm');
 }

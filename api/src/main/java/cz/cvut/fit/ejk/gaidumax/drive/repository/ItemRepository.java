@@ -24,7 +24,7 @@ public class ItemRepository extends UuidBaseEntityRepository<Item> {
         var sql = new StringBuilder("""
                 select i
                 from Item i
-                where i.author.id = :authorId
+                where i.user.id = :userId
                 """);
         if (CollectionUtils.isNotEmpty(filter.getTypes())) {
             sql.append('\n');
@@ -37,23 +37,24 @@ public class ItemRepository extends UuidBaseEntityRepository<Item> {
         sql.append('\n');
         var parentFolderId = filter.getParentFolderId();
         if (parentFolderId != null) {
-            sql.append("and i.parentFolder.id = cast(:parentFolderId as uuid)");
+            sql.append("and i.parentFolder.Id = cast(:parentFolderId as uuid)");
         } else {
             sql.append("and i.parentFolder.id is null");
         }
         var sort = filter.buildSort();
         var pageable = filter.buildPageable();
-        var authorId = securityContextProvider.getUserId();
+        var userId = securityContextProvider.getUserId();
         var query = createQuery(sql.toString(), sort, pageable)
-                .setParameter("authorId", authorId);
+                .setParameter("userId", userId);
         if (parentFolderId != null) {
             query.setParameter("parentFolderId", parentFolderId.toString());
         }
         if (CollectionUtils.isNotEmpty(filter.getTypes())) {
-            query.setParameter("types", filter.getTypes());
+            var typesStr = filter.getTypes().stream().map(Enum::name).toList();
+            query.setParameter("types", typesStr);
         }
         if (StringUtils.isNotEmpty(filter.getName())) {
-            query.setParameter("name", "%" + filter.getName() + "%");
+            query.setParameter("name", "%%%s%%".formatted(filter.getName()));
         }
         return query.getResultList();
     }
