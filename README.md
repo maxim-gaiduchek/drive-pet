@@ -20,7 +20,8 @@ The project uses a modern tech stack: **Java (Quarkus)**, **React**, **PostgreSQ
 
 ## 🏗 Project Structure
 
-/api → Backend (Quarkus, Java) \
+/api → Backend (Quarkus, Java) 
+
 /frontend → Frontend (React) 
 
 ---
@@ -32,6 +33,7 @@ The project uses a modern tech stack: **Java (Quarkus)**, **React**, **PostgreSQ
 - **Database:** PostgreSQL
 - **File Storage:** LocalStack (emulating AWS S3)
 - **Containerization:** Docker, Docker Compose
+- **API Documentation**: Swagger (OpenAPI)
 
 ---
 
@@ -102,3 +104,16 @@ Frontend
 cd frontend
 npm run build
 ```
+
+### 📖 API Documentation (Swagger)
+The backend API is documented using Swagger (OpenAPI).
+
+After running the backend, you can access:
+
+OpenAPI spec (JSON/YAML):
+http://localhost:8080/openapi
+
+Swagger UI (interactive docs):
+http://localhost:8080/swagger-ui
+
+Here you can explore, test, and interact with the API endpoints directly from the browser.
