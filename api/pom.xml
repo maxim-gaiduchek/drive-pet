@@ -120,6 +120,10 @@
             <artifactId>quarkus-amazon-s3</artifactId>
             <version>3.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-openapi</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
