@@ -33,6 +33,7 @@ public class FolderController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
     public FolderDto get(@PathParam("id") UUID id) {
         authService.checkUserHasReadAccessToFolder(id);
         var folder = folderService.getByIdOrThrow(id);
@@ -43,7 +44,7 @@ public class FolderController {
     @Path("/{id}/parents")
     @Produces(MediaType.APPLICATION_JSON)
     @Authenticated
-    public List<FolderDto> getAllParentFolder(@PathParam("id") UUID id) {
+    public List<FolderDto> getAllParentFolders(@PathParam("id") UUID id) {
         var folders = folderService.getAllParentFolders(id);
         return folderMapper.toDtos(folders);
     }
