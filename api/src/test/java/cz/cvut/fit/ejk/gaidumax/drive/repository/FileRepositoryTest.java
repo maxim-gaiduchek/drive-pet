@@ -1,8 +1,6 @@
 package cz.cvut.fit.ejk.gaidumax.drive.repository;
 
 import cz.cvut.fit.ejk.gaidumax.drive.entity.File;
-import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
-import cz.cvut.fit.ejk.gaidumax.drive.security.Role;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -10,7 +8,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
 class FileRepositoryTest {
@@ -52,6 +52,7 @@ class FileRepositoryTest {
     void testFindByAccessToken_withPresentFile() {
         var result = fileRepository.findByAccessToken(savedFileWithAccessToken.getAccessToken());
         assertTrue(result.isPresent());
+        assertEquals(savedFileWithAccessToken.getId(), result.get().getId());
         assertEquals(savedFileWithAccessToken.getFileName(), result.get().getFileName());
         assertEquals(savedFileWithAccessToken.getFileType(), result.get().getFileType());
         assertEquals(savedFileWithAccessToken.getSize(), result.get().getSize());

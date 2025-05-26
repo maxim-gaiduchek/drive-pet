@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,6 +43,7 @@ class UserRepositoryTest {
     void testFindByEmail_withPresentUser() {
         var result = userRepository.findByEmail(savedUser.getEmail());
         assertTrue(result.isPresent());
+        assertEquals(savedUser.getId(), result.get().getId());
         assertEquals(savedUser.getFirstName(), result.get().getFirstName());
         assertEquals(savedUser.getLastName(), result.get().getLastName());
         assertEquals(savedUser.getEmail(), result.get().getEmail());
