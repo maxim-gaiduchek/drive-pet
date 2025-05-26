@@ -186,7 +186,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withoutFilters_withOwnerAuthentication() {
+    void testFindAll_withoutFilters_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -209,7 +209,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withParentFolderFilter_withOwnerAuthentication() {
+    void testFindAll_withParentFolderFilter_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -233,7 +233,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withAnotherParentFolderFilter_withOwnerAuthentication() {
+    void testFindAll_withAnotherParentFolderFilter_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -249,7 +249,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withSortByName_withOwnerAuthentication() {
+    void testFindAll_withSortByName_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -267,7 +267,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withSortByNameDesc_withOwnerAuthentication() {
+    void testFindAll_withSortByNameDesc_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -286,7 +286,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withSortByNameAsc_withOwnerAuthentication() {
+    void testFindAll_withSortByNameAsc_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -305,7 +305,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withParentFolderFilterSortByNameAsc_withOwnerAuthentication() {
+    void testFindAll_withParentFolderFilterSortByNameAsc_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -326,7 +326,7 @@ class ItemControllerTest {
     @Disabled
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withParentFolderFilterSortByNameAscPageSize1_withOwnerAuthentication() {
+    void testFindAll_withParentFolderFilterSortByNameAscPageSize1_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -347,7 +347,7 @@ class ItemControllerTest {
     @Disabled
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withParentFolderFilterSortByNameAscPage1PageSize1_withOwnerAuthentication() {
+    void testFindAll_withParentFolderFilterSortByNameAscPage1PageSize1_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -368,7 +368,7 @@ class ItemControllerTest {
     @Disabled
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withParentFolderFilterSortByNameAscPage2PageSize1_withOwnerAuthentication() {
+    void testFindAll_withParentFolderFilterSortByNameAscPage2PageSize1_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -388,7 +388,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withTypesFilters_withOwnerAuthentication() {
+    void testFindAll_withTypesFilters_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -408,7 +408,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withEmptyTypesFilters_withOwnerAuthentication() {
+    void testFindAll_withEmptyTypesFilters_withOwnerAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedOwner.getId());
 
         given()
@@ -432,7 +432,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withoutFilters_withUserAuthentication() {
+    void testFindAll_withoutFilters_withUserAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedUser.getId());
 
         given()
@@ -451,7 +451,7 @@ class ItemControllerTest {
 
     @Test
     @TestSecurity(user = "test-user", roles = {"ROLE_USER"})
-    void testFindAll_withParentFolderFilter_withUserAuthentication() {
+    void testFindAll_withParentFolderFilter_withUserAuthorization() {
         when(securityContextProvider.getUserId()).thenReturn(savedUser.getId());
 
         given()

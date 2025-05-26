@@ -6,7 +6,6 @@ import cz.cvut.fit.ejk.gaidumax.drive.entity.Folder;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.UserAccessType;
 import cz.cvut.fit.ejk.gaidumax.drive.entity.UserFolderAccess;
-import cz.cvut.fit.ejk.gaidumax.drive.entity.UuidBaseEntity;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.EntityNotFoundException;
 import cz.cvut.fit.ejk.gaidumax.drive.exception.ValidationException;
 import cz.cvut.fit.ejk.gaidumax.drive.repository.FolderRepository;
@@ -23,10 +22,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
