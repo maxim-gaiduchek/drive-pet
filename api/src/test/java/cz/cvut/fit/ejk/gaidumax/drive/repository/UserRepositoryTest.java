@@ -4,6 +4,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.entity.User;
 import cz.cvut.fit.ejk.gaidumax.drive.security.Role;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,8 @@ class UserRepositoryTest {
 
     @Inject
     UserRepository userRepository;
+    @Inject
+    EntityManager entityManager;
 
     private User savedUser;
 
@@ -37,7 +40,10 @@ class UserRepositoryTest {
     @AfterEach
     @Transactional
     void tearDown() {
-        userRepository.delete(savedUser);
+        entityManager.createQuery("""
+                        delete from User
+                        """)
+                .executeUpdate();
     }
 
     @Test

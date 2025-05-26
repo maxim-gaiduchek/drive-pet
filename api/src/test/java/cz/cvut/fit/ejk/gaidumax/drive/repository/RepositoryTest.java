@@ -43,8 +43,10 @@ class RepositoryTest {
     @AfterEach
     @Transactional
     void tearDown() {
-        var userToDelete = entityManager.merge(savedUser);
-        entityManager.remove(userToDelete);
+        entityManager.createQuery("""
+                        delete from User
+                        """)
+                .executeUpdate();
     }
 
     @Test
