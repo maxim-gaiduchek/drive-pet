@@ -6,7 +6,6 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
-@Slf4j
 class RepositoryTest {
 
     @Inject
@@ -45,9 +43,8 @@ class RepositoryTest {
     @AfterEach
     @Transactional
     void tearDown() {
-        entityManager.createQuery("DELETE FROM User WHERE id = :id")
-                .setParameter("id", savedUser.getId())
-                .executeUpdate();
+        var userToDelete = entityManager.merge(savedUser);
+        entityManager.remove(userToDelete);
     }
 
     @Test
