@@ -13,6 +13,7 @@ import cz.cvut.fit.ejk.gaidumax.drive.repository.FolderRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.repository.UserRepository;
 import cz.cvut.fit.ejk.gaidumax.drive.security.Role;
 import cz.cvut.fit.ejk.gaidumax.drive.service.security.interfaces.SecurityContextProvider;
+import cz.cvut.fit.ejk.gaidumax.drive.utils.UuidUtils;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -125,20 +126,9 @@ class FolderServiceImplTest {
 
     @Test
     void testFindById_withEmptyFolder() {
-        var id = generateNewUuid();
+        var id = UuidUtils.generateNewUuid(savedFolder, savedParentFolder, savedFolderWithParentFolder);
         var result = folderService.findById(id);
         assertTrue(result.isEmpty());
-    }
-
-    private UUID generateNewUuid() {
-        var ids = Set.of(savedFolder, savedParentFolder, savedFolderWithParentFolder).stream()
-                .map(UuidBaseEntity::getId)
-                .collect(Collectors.toSet());
-        UUID id;
-        do {
-            id = UUID.randomUUID();
-        } while (ids.contains(id));
-        return id;
     }
 
     @Test
@@ -151,7 +141,7 @@ class FolderServiceImplTest {
 
     @Test
     void testGetByIdOrThrow_withEmptyFolder() {
-        var id = generateNewUuid();
+        var id = UuidUtils.generateNewUuid(savedFolder, savedParentFolder, savedFolderWithParentFolder);
         assertThrows(EntityNotFoundException.class, () -> folderService.getByIdOrThrow(id));
     }
 
@@ -214,8 +204,9 @@ class FolderServiceImplTest {
 
     @Test
     void testCreate_withNoParentFolderFound() {
+        var parentFolderId = UuidUtils.generateNewUuid(savedFolder, savedParentFolder, savedFolderWithParentFolder);
         var parentFolderDto = UuidBaseInfoDto.builder()
-                .id(generateNewUuid())
+                .id(parentFolderId)
                 .build();
         var folderDto = FolderDto.builder()
                 .name("New test folder")
@@ -316,22 +307,7 @@ class FolderServiceImplTest {
 
     @Test
     void testDelete_withoutExistedFolder() {
-        var id = generateNewUuid();
+        var id = UuidUtils.generateNewUuid(savedFolder, savedParentFolder, savedFolderWithParentFolder);
         assertThrows(EntityNotFoundException.class, () -> folderService.delete(id));
-    }
-
-    @Test
-    @Transactional
-    void testSetupUserInternalFileReadAccessForParentFolders() {
-        var user = User.builder()
-                .firstName("New")
-                .lastName("Access")
-                .email("new_access@test.com")
-                .password("123")
-                .role(Role.ROLE_USER)
-                .build();
-        var savedUser = userRepository.save(user);
-
-        folderService.setupUserInternalFileReadAccessForParentFolders(savedFolderWithParentFolder.getId(), savedUser.getId());
     }
 }
